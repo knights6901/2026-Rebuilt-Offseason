@@ -11,32 +11,21 @@ import static frc.robot.subsystems.indexer.IndexerConstants.*;
 import frc.robot.Constants.CANConstants;
 
 /**
- * Subsystem controlling the indexer mechanism, which transfers game pieces
- * from the intake into the shooter using a single TalonFX motor with
- * closed-loop velocity control.
+ * Controls the indexer that feeds game pieces from the intake into the shooter.
  */
 public class Indexer extends SubsystemBase {
     private final TalonFX m_motor = new TalonFX(MotorId, CANConstants.kSubsystemNetwork);
 
-    /**
-     * Initializes the indexer subsystem with motor configuration and PID settings.
-     */
     public Indexer() {
         m_motor.getConfigurator().apply(MotorConfig);
     }
 
-    /**
-     * Returns a command that runs the indexer motor at the configured velocity
-     * to feed game pieces toward the shooter.
-     */
+    /** Returns a command that runs the indexer at the configured velocity. */
     public Command enable() {
         return run(() -> m_motor.setControl(new VelocityVoltage(Power)));
     }
 
-    /**
-     * Returns a command that runs the indexer motor in the reverse direction of
-     * the configured velocity.
-     */
+    /** Returns a command that runs the indexer in reverse. */
     public Command enableInverted() {
         return run(() -> m_motor.setControl(new VelocityVoltage(Power.times(-1))));
     }
