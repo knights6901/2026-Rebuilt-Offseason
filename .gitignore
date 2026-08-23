@@ -39,6 +39,8 @@
 # Compiled class file
 *.class
 
+.metals
+
 # Log file
 *.log
 
