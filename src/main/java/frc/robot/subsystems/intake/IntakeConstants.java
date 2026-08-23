@@ -22,20 +22,20 @@ public final class IntakeConstants {
     /** The gear ratio of the intake system. */
     public final static double GearRatio = 9.0;
 
-    /** The PID and feedforward settings for the intake motor. */
+    /** PID and feedforward gains for the intake motor. */
     public final static Slot0Configs Gains = new Slot0Configs()
-                    .withKP(0.5).withKI(0).withKD(0)
-                    .withKS(0).withKV(0.15);
+            .withKP(0.5).withKI(0).withKD(0)
+            .withKS(0).withKV(0.15);
 
     /** The complete motor configuration for the intake system. */
     public final static TalonFXConfiguration MotorConfig = new TalonFXConfiguration()
-                    .withSlot0(IntakeConstants.Gains)
-                    .withMotorOutput(new MotorOutputConfigs()
-                                    .withNeutralMode(NeutralModeValue.Brake)
-                                    .withInverted(InvertedValue.Clockwise_Positive))
-                    .withCurrentLimits(new CurrentLimitsConfigs()
-                                    .withStatorCurrentLimit(Amps.of(40))
-                                    .withStatorCurrentLimitEnable(true)
-                                    .withSupplyCurrentLimit(Amps.of(60))
-                                    .withSupplyCurrentLimitEnable(true));
+            .withSlot0(IntakeConstants.Gains)
+            .withMotorOutput(new MotorOutputConfigs()
+                    .withNeutralMode(NeutralModeValue.Brake)
+                    .withInverted(InvertedValue.Clockwise_Positive))
+            .withCurrentLimits(new CurrentLimitsConfigs()
+                    .withStatorCurrentLimit(Amps.of(40))
+                    .withStatorCurrentLimitEnable(true)
+                    .withSupplyCurrentLimit(Amps.of(60))
+                    .withSupplyCurrentLimitEnable(true));
 }

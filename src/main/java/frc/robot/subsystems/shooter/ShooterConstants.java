@@ -34,7 +34,7 @@ public final class ShooterConstants {
      * The default rotations per second of the shooter to shoot a ball (tested
      * experimentally).
      */
-    public final static AngularVelocity DefaultRPS = RotationsPerSecond.of(30.6901);
+    public final static AngularVelocity DefaultRPS = RotationsPerSecond.of(30);
 
     /**
      * The tolerance for determining whether the shooter is "primed" and ready to
@@ -62,15 +62,18 @@ public final class ShooterConstants {
      * The scaling constant to correct for damping in the shooter mechanism when the
      * robot is "far" from the hub.
      */
-    public final static double DampingFarCoefficient = 1.6901 + 0.05;
+    public final static double DampingFarCoefficient = 1.75;
     /**
      * The scaling constant to correct for damping in the shooter mechanism when the
      * robot is "near" from the hub.
      */
-    public final static double DampingNearCoefficient = 2.6901;
+    public final static double DampingNearCoefficient = 2.7;
 
     /** The maximum distance to be considered "near" to the hub. */
     public final static Distance NearHubDistance = Meters.of(2);
+
+    /** The radius of the shooter flywheel, used to convert exit velocity to RPS. */
+    public final static Distance WheelRadius = Meters.of(0.051);
 
     /** The complete motor configuration for the shooter system. */
     public static final TalonFXConfiguration MotorConfig = new TalonFXConfiguration()

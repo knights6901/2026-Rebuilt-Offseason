@@ -1,7 +1,8 @@
 package frc.robot.subsystems.indexer;
 
-import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.*;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -20,10 +21,10 @@ public final class IndexerConstants {
     public final static TalonFXConfiguration MotorConfig = new TalonFXConfiguration()
             .withMotorOutput(new MotorOutputConfigs()
                     .withNeutralMode(NeutralModeValue.Coast)
-                    .withInverted(InvertedValue.CounterClockwise_Positive));
-    // .withCurrentLimits(new CurrentLimitsConfigs()
-    // .withStatorCurrentLimit(Amps.of(40))
-    // .withStatorCurrentLimitEnable(true)
-    // .withSupplyCurrentLimit(Amps.of(60))
-    // .withSupplyCurrentLimitEnable(true));
+                    .withInverted(InvertedValue.CounterClockwise_Positive))
+            .withCurrentLimits(new CurrentLimitsConfigs()
+                    .withStatorCurrentLimit(Amps.of(40))
+                    .withStatorCurrentLimitEnable(true)
+                    .withSupplyCurrentLimit(Amps.of(60))
+                    .withSupplyCurrentLimitEnable(true));
 }

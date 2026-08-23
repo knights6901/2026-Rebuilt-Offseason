@@ -11,32 +11,22 @@ import static frc.robot.subsystems.kicker.KickerConstants.*;
 import frc.robot.Constants.CANConstants;
 
 /**
- * Subsystem controlling the kicker wheel, which provides the final push
- * to transfer game pieces from the indexer into the shooter flywheel.
+ * Controls the kicker wheel that pushes game pieces from the indexer into the
+ * shooter.
  */
 public class Kicker extends SubsystemBase {
     private final TalonFX m_motor = new TalonFX(MotorId, CANConstants.kSubsystemNetwork);
 
-    /**
-     * Initializes the kicker subsystem with motor configuration, PID settings,
-     * and current limiting.
-     */
     public Kicker() {
         m_motor.getConfigurator().apply(MotorConfig);
     }
 
-    /**
-     * Returns a command that spins the kicker wheel
-     * at the configured velocity to feed a game piece into the shooter.
-     */
+    /** Returns a command that spins the kicker wheel at the configured velocity. */
     public Command kick() {
         return run(() -> m_motor.setControl(new VelocityVoltage(KickerPower)));
     }
 
-    /**
-     * Returns a command that spins the kicker wheel in the reverse direction of
-     * the configured velocity to feed a game piece into the shooter.
-     */
+    /** Returns a command that spins the kicker wheel in reverse. */
     public Command kickReversed() {
         return run(() -> m_motor.setControl(new VelocityVoltage(KickerPower.times(-1))));
     }

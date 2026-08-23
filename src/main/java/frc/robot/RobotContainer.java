@@ -15,14 +15,21 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+
 import frc.robot.Constants.Operator;
+import frc.robot.subsystems.drive.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.drive.TunerConstants;
+import frc.robot.subsystems.indexer.Indexer;
+import frc.robot.subsystems.kicker.Kicker;
+import frc.robot.subsystems.led.LED;
 
 public class RobotContainer {
     private final Drive drivetrain;
     private final Vision vision;
+    private final Indexer indexer;
+    private final Kicker kicker;
+    private final LED led;
 
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(kMaxSpeed * kTranslationDeadband)
@@ -34,6 +41,9 @@ public class RobotContainer {
     public RobotContainer() {
         drivetrain = TunerConstants.createDrivetrain();
         vision = new Vision(drivetrain);
+        indexer = new Indexer();
+        kicker = new Kicker();
+        led = new LED(drivetrain);
 
         configureBindings();
     }

@@ -25,7 +25,7 @@ public final class LEDConstants {
     public static final LEDPattern FlashingPurple = Purple.breathe(Seconds.of(0.5));
 
     public static final LEDPattern RainbowPattern = LEDPattern
-                    .rainbow(255, 128);
+            .rainbow(255, 128);
     public static final LEDPattern ScrollRainbowPattern = RainbowPattern.scrollAtRelativeSpeed(
-                    Percent.per(Second).of(120));
+            Percent.per(Second).of(120));
 }

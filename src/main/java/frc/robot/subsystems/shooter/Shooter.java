@@ -1,12 +1,12 @@
 package frc.robot.subsystems.shooter;
+
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.kicker.Kicker;
 import frc.robot.commands.ShootCommand;
 
 import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
-import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static frc.robot.subsystems.shooter.ShooterConstants.*;
 
 import java.util.function.Supplier;
 
@@ -20,12 +20,10 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -35,93 +33,70 @@ import frc.robot.Constants.CANConstants;
 import frc.robot.Constants.GameConstants;
 
 /**
- * Subsystem controlling the dual-motor shooter flywheel.
- *
- * <p>
- * The left motor follows the right motor in the opposed direction. Provides
- * multiple shoot overloads for manual, automatic, and auto-aim velocity
- * control, as well as trajectory visualization and ballistics calculations
- * for distance-based shot speed.
+ * Dual-motor shooter flywheel; the left motor follows the right in the
+ * opposed direction. Provides manual, automatic, and auto-aim shoot
+ * commands. Ballistics math lives in {@link ShooterPhysics}.
  */
 public class Shooter extends SubsystemBase {
-    private final TalonFX m_motorRight = new TalonFX(ShooterConstants.RightMotorId, CANConstants.kSubsystemNetwork);
-    private final TalonFX m_motorLeft = new TalonFX(ShooterConstants.LeftMotorId, CANConstants.kSubsystemNetwork);
+    private final TalonFX m_motorRight = new TalonFX(RightMotorId, CANConstants.kSubsystemNetwork);
+    private final TalonFX m_motorLeft = new TalonFX(LeftMotorId, CANConstants.kSubsystemNetwork);
     private final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
 
-    /** The possible states of the shooter mechanism. */
+    /** The operating states of the shooter mechanism. */
     public static enum ShooterState {
+        /** Flywheel stopped. */
         OFF,
-        AUTOHUB,
+        /** Spinning up for an auto-aimed hub shot. */
         AUTOHUB_PRIMING,
-        AUTOPASS,
+        /** At speed and shooting into the hub. */
+        AUTOHUB,
+        /** Spinning up for an auto-aimed pass. */
         AUTOPASS_PRIMING,
+        /** At speed and shooting a pass. */
+        AUTOPASS,
+        /** Spinning up for a manual shot. */
         PRIMING,
+        /** At speed and shooting under manual/driver control. */
         MANUAL
     }
 
-    private final StringPublisher shooterStatePub = NetworkTableInstance.getDefault()
-            .getTable("Shooter")
-            .getStringTopic("Shooter?")
-            .publish();
-
-    private final DoublePublisher targetRPSPub = NetworkTableInstance.getDefault()
-            .getTable("Shooter")
-            .getDoubleTopic("TargetRPS")
-            .publish();
-
-    private final DoublePublisher actualRPSPub = NetworkTableInstance.getDefault()
-            .getTable("Shooter")
-            .getDoubleTopic("ActualRPS")
-            .publish();
-
-    private final DoublePublisher manualRPSPub = NetworkTableInstance.getDefault()
-            .getTable("Shooter")
-            .getDoubleTopic("NaveenRPS")
-            .publish();
-
+    /** The shooter's current operating state; set by the shoot commands. */
     public ShooterState shooterState = ShooterState.OFF;
 
-    // private AngularVelocity shootRPS = ShooterConstants.DefaultRPS;
-    private AngularVelocity shootRPS = calculateRPS(Meters.of(3));
-    public AngularVelocity targetRPS;
+    private AngularVelocity shootRPS = ShooterPhysics.calculateRPS(Meters.of(3));
 
-    public final Trigger primed = new Trigger(() -> {
-        if (targetRPS == null) {
-            return false;
-        }
-
-        double rpsError = getCurrentRPS().minus(targetRPS).abs(RotationsPerSecond);
-
-        return rpsError <= ShooterConstants.PrimingTolerance.in(RotationsPerSecond);
-    });
+    /** The flywheel RPS currently being targeted; zero when idle. */
+    public AngularVelocity targetRPS = RotationsPerSecond.of(0);
 
     /**
-     * Configures both shooter motors with PID gains from constants and sets the
-     * left motor to follow the right motor in the opposed direction.
+     * True once the flywheel is within {@link ShooterConstants#PrimingTolerance} of
+     * {@link #targetRPS}.
      */
+    public final Trigger primed = new Trigger(
+            () -> getCurrentRPS().minus(targetRPS).abs(RotationsPerSecond) <= PrimingTolerance.in(RotationsPerSecond));
+
+    /** Configures both motors and sets the left to follow the right, opposed. */
     public Shooter() {
-        TalonFXConfiguration m_motorConfig = new TalonFXConfiguration();
-        m_motorConfig.Slot0 = ShooterConstants.Gains;
-        m_motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-        m_motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        TalonFXConfiguration motorConfig = new TalonFXConfiguration();
+        motorConfig.Slot0 = Gains;
+        motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
-        m_motorRight.getConfigurator().apply(m_motorConfig);
-        m_motorLeft.getConfigurator().apply(m_motorConfig);
+        m_motorRight.getConfigurator().apply(motorConfig);
+        m_motorLeft.getConfigurator().apply(motorConfig);
 
-        m_motorLeft.setControl(new Follower(ShooterConstants.RightMotorId, MotorAlignmentValue.Opposed));
-    }
-
-    public void shoot() {
-        targetRPS = shootRPS;
-        m_motorRight.setControl(m_request.withVelocity(shootRPS));
+        m_motorLeft.setControl(new Follower(RightMotorId, MotorAlignmentValue.Opposed));
     }
 
     /**
-     * Spins the flywheel at the specified angular velocity, typically used
-     * for auto-aim shots where the velocity is computed from target distance.
-     *
-     * @param rps target angular velocity
+     * Spins the flywheel at the current manual target speed
+     * ({@link #getShootRPS()}).
      */
+    public void shoot() {
+        shoot(shootRPS);
+    }
+
+    /** Spins the flywheel at {@code rps}, e.g. for auto-aim shots. */
     public void shoot(AngularVelocity rps) {
         targetRPS = rps;
         m_motorRight.setControl(m_request.withVelocity(rps));
@@ -134,104 +109,71 @@ public class Shooter extends SubsystemBase {
         targetRPS = RotationsPerSecond.of(0);
     }
 
+    /** Bumps the manual target speed up by 1 RPS. */
     public void increaseShootRPS() {
         shootRPS = shootRPS.plus(RotationsPerSecond.of(1));
     }
 
+    /** Bumps the manual target speed down by 1 RPS. */
     public void decreaseShootRPS() {
         shootRPS = shootRPS.minus(RotationsPerSecond.of(1));
     }
 
     /**
-     * Calculates the required flywheel angular velocity to hit the hub target at
-     * the given horizontal distance, using projectile kinematics with a fixed
-     * launch pitch angle.
-     *
-     * @param groundDistance horizontal distance from the robot to the target
-     * @param targetHeight   vertical height of the target from the floor
-     * @return the flywheel angular velocity needed to reach the target
+     * The manual target speed set via
+     * {@link #increaseShootRPS()}/{@link #decreaseShootRPS()}.
      */
-    public AngularVelocity calculateRPS(Distance groundDistance, Distance targetHeight) {
-        double dx = groundDistance.in(Meters);
-        double dy = targetHeight.minus(ShooterConstants.BallExtakeHeight).in(Meters);
-
-        double gVal = ShooterConstants.G.in(MetersPerSecondPerSecond);
-        double pitchRad = ShooterConstants.Pitch.in(Radians);
-
-        double numerator = gVal * dx * dx;
-        double denominator = 2 * Math.pow(Math.cos(pitchRad), 2) * (dx * Math.tan(pitchRad) - dy);
-
-        double velocity = Math.sqrt(numerator / denominator);
-
-        double rps = velocity / (2 * Math.PI * 0.051);
-
-        double damping = groundDistance.lte(ShooterConstants.NearHubDistance)
-                ? ShooterConstants.DampingNearCoefficient
-                : ShooterConstants.DampingFarCoefficient;
-
-        return RotationsPerSecond.of(damping * rps);
-    }
-
-    /**
-     * Calculates the required flywheel angular velocity to hit the hub target at
-     * the given horizontal distance, using projectile kinematics with a fixed
-     * launch pitch angle.
-     *
-     * @param groundDistance horizontal distance from the robot to the target
-     * @return the flywheel angular velocity needed to reach the target
-     */
-    public AngularVelocity calculateRPS(Distance groundDistance) {
-        return calculateRPS(groundDistance, GameConstants.HubTargetHeight);
-    }
-
     public AngularVelocity getShootRPS() {
         return shootRPS;
     }
 
-    public AngularVelocity getAPManualRPS(double axisInput) {
-        return ShooterConstants.MaxRPS.times(axisInput);
+    /**
+     * Scales {@link ShooterConstants#MaxRPS} by a [-1, 1] axis input for manual
+     * control.
+     */
+    public AngularVelocity getManualRPS(double axisInput) {
+        return MaxRPS.times(axisInput);
     }
 
+    /** The flywheel's measured angular velocity. */
     public AngularVelocity getCurrentRPS() {
         return m_motorLeft.getVelocity().getValue();
     }
 
+    /** The flywheel's currently commanded angular velocity. */
     public AngularVelocity getTargetRPS() {
         return targetRPS;
     }
 
     @Override
     public void periodic() {
-        // Publish current velocities for telemetry
         if (shooterState == ShooterState.MANUAL) {
-            shooterStatePub.set(shootRPS.in(RotationsPerSecond) + " (MANUAL)");
+            DogLog.log("Shooter/State", shootRPS.in(RotationsPerSecond) + " (MANUAL)");
         } else if (shooterState == ShooterState.AUTOHUB_PRIMING) {
-            shooterStatePub.set("PRIMING AUTOHUB");
+            DogLog.log("Shooter/State", "PRIMING AUTOHUB");
         } else if (shooterState == ShooterState.AUTOPASS_PRIMING) {
-            shooterStatePub.set("PRIMING AUTOPASS");
+            DogLog.log("Shooter/State", "PRIMING AUTOPASS");
         } else {
-            shooterStatePub.set(shooterState.toString());
+            DogLog.log("Shooter/State", shooterState.toString());
         }
 
-        actualRPSPub.set(getCurrentRPS().in(RotationsPerSecond));
-
-        targetRPSPub.set(targetRPS != null ? targetRPS.in(RotationsPerSecond) : 0);
-
-        manualRPSPub.set(shootRPS.in(RotationsPerSecond));
-
-        // nearFarPub.set();
+        DogLog.log("Shooter/ActualRPS", getCurrentRPS().in(RotationsPerSecond));
+        DogLog.log("Shooter/TargetRPS", targetRPS.in(RotationsPerSecond));
+        DogLog.log("Shooter/ManualRPS", shootRPS.in(RotationsPerSecond));
     }
 
-    /**
-     * Creates a command that primes the shooter to the default prime RPS.
-     */
+    /** Returns a command that primes the shooter to the default prime RPS. */
     public Command prime() {
         return run(() -> {
-            shoot(ShooterConstants.DefaultPrimeRPS);
+            shoot(DefaultPrimeRPS);
             shooterState = ShooterState.PRIMING;
         });
     }
 
+    /**
+     * Returns a command that primes then shoots at whatever RPS {@code rpsSupplier}
+     * reports.
+     */
     public Command manuallyShoot(
             Supplier<AngularVelocity> rpsSupplier,
             Kicker kicker,
@@ -244,8 +186,8 @@ public class Shooter extends SubsystemBase {
     }
 
     /**
-     * Creates a command that automatically calculates the required shooter RPS
-     * based on the robot's current position and a specified target location.
+     * Returns a command that shoots at an RPS computed from the robot's pose to
+     * {@code target}.
      */
     private Command shootAtTarget(
             Supplier<Pose2d> currentPoseSupplier,
@@ -262,7 +204,7 @@ public class Shooter extends SubsystemBase {
             Distance shotGroundDistance = Meters
                     .of(currentPose.getTranslation().getDistance(xyProjection));
 
-            return calculateRPS(shotGroundDistance, target.getMeasureZ());
+            return ShooterPhysics.calculateRPS(shotGroundDistance, target.getMeasureZ());
         };
 
         return new ShootCommand(
@@ -271,6 +213,10 @@ public class Shooter extends SubsystemBase {
                 primingState, shootingState);
     }
 
+    /**
+     * Returns a command that auto-aims and shoots into the hub based on the robot's
+     * live pose.
+     */
     public Command autoAimShoot(
             Supplier<Pose2d> currentPoseSupplier,
             Kicker kicker,
@@ -288,6 +234,10 @@ public class Shooter extends SubsystemBase {
                 ShooterState.AUTOHUB_PRIMING, ShooterState.AUTOHUB);
     }
 
+    /**
+     * Returns a command that auto-aims and shoots a pass based on the robot's live
+     * pose.
+     */
     public Command passShoot(
             Supplier<Pose2d> currentPoseSupplier,
             Kicker kicker,

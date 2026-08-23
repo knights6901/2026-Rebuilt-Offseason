@@ -1,7 +1,7 @@
 package frc.robot.subsystems.led;
-import frc.robot.subsystems.drive.Drive;
 
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static frc.robot.subsystems.led.LEDConstants.*;
 
 import java.util.function.Supplier;
 
@@ -12,9 +12,10 @@ import edu.wpi.first.wpilibj.AddressableLEDBufferView;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.drive.Drive;
 
+/** Drives the addressable LED strip, split into left/middle/right zones. */
 public class LED extends SubsystemBase {
     private final AddressableLED led;
     private final AddressableLEDBuffer buffer;
@@ -23,9 +24,9 @@ public class LED extends SubsystemBase {
     private final AddressableLEDBufferView right;
 
     public LED(Drive drivetrain) {
-        led = new AddressableLED(LEDConstants.Port);
-        buffer = new AddressableLEDBuffer(LEDConstants.Length);
-        led.setLength(LEDConstants.Length);
+        led = new AddressableLED(Port);
+        buffer = new AddressableLEDBuffer(Length);
+        led.setLength(Length);
 
         left = buffer.createView(0, 36);
         middle = buffer.createView(37, 166);
@@ -34,43 +35,40 @@ public class LED extends SubsystemBase {
         led.start();
     }
 
+    /** Returns a red→orange→yellow→green pattern interpolated by {@code t} in [0, 1]. */
     public LEDPattern fireUpPattern(double t) {
-        t = Math.max(0.0, Math.min(1.0, t)); // clamp
+        t = Math.max(0.0, Math.min(1.0, t));
 
         if (t < 0.33) {
-            // red → orange
             double local = t / 0.33;
             return LEDPattern.solid(new Color(1.0, 0.27 * local, 0.0));
         } else if (t < 0.66) {
-            // orange → yellow
             double local = (t - 0.33) / 0.33;
             return LEDPattern.solid(new Color(1.0, 0.27 + 0.73 * local, 0.0));
         } else {
-            // yellow → green
             double local = (t - 0.66) / 0.34;
             return LEDPattern.solid(new Color(1.0 - local, 1.0, 0.0));
         }
     }
 
-    /**
-     * Creates a command that runs a pattern on the entire LED strip.
-     *
-     * @param pattern the LED pattern to run
-     */
+    /** Returns a command that runs {@code pattern} on the entire strip. */
     public Command runPattern(LEDPattern pattern) {
         return run(() -> pattern.applyTo(buffer));
     }
 
+    /** Returns a command that runs {@code pattern} on the left zone. */
     public Command runPatternLeft(LEDPattern pattern) {
-        return new RunCommand(() -> pattern.applyTo(left));
+        return run(() -> pattern.applyTo(left));
     }
 
+    /** Returns a command that runs {@code pattern} on the middle zone. */
     public Command runPatternMiddle(LEDPattern pattern) {
-        return new RunCommand(() -> pattern.applyTo(middle));
+        return run(() -> pattern.applyTo(middle));
     }
 
+    /** Returns a command that runs {@code pattern} on the right zone. */
     public Command runPatternRight(LEDPattern pattern) {
-        return new RunCommand(() -> pattern.applyTo(right));
+        return run(() -> pattern.applyTo(right));
     }
 
     public Command runAllPatterns(
