@@ -5,10 +5,6 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Optional;
 
-import static edu.wpi.first.units.Units.Inches;
-
-import java.io.IOException;
-
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -20,15 +16,15 @@ import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.VecBuilder;
+
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
@@ -52,29 +48,24 @@ public class Vision extends SubsystemBase {
     private final Drive drivetrain;
 
     private final PhotonPoseEstimator visionPoseEstimator;
+
     // not final because setting fieldLayout wasn't working without try/catch
     private AprilTagFieldLayout fieldLayout;
 
-    /** Vision simulation system (active only when running in simulator). */
     private VisionSystemSim visionSim;
-    /**
-     * Simulated camera properties and output (active only when running in
-     * simulator).
-     */
     private PhotonCameraSim cameraSim;
 
-    /** Network table publisher for visible AprilTag positions. */
-    private final StructArrayPublisher<Pose3d> tagPublisher;
-
-    /** Cached list of 3D field poses for currently visible AprilTags. */
+    
+    // for sim + logging so we can test easier
     private List<Pose3d> visibleTagPoses = new ArrayList<>();
-    /** Cached list of fiducial IDs for currently visible AprilTags. */
     private List<Integer> visibleTagIds = new ArrayList<>();
+    private final StructArrayPublisher<Pose3d> tagPublisher;
 
     /** The most recently estimated robot pose from vision (optional). */
     private Optional<EstimatedRobotPose> estimatedPose = Optional.empty();
 
     public boolean hasSeededPose = true;
+    private boolean multiTag = false;
 
     public final Field2d m_visionfield = new Field2d();
 
@@ -89,28 +80,18 @@ public class Vision extends SubsystemBase {
      * simulation if running in sim.
      */
     public Vision(Drive drivetrain) {
-        photonCam = new PhotonCamera("photonCam");
+        photonCam = new PhotonCamera(VisionConstants.arducamName);
 
         this.drivetrain = drivetrain;
 
-        try {
-            fieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2026RebuiltAndymark.m_resourceFile);
-        } catch (IOException e) {
-            System.out.println("Could not find the field file!");
-        }
-
-        Transform3d robotToCam = new Transform3d(
-                new Translation3d(Inches.of(-13), Inches.of(0.0), Inches.of(6.5)),
-                new Rotation3d(0, Math.PI / 6, Math.PI));
-
         if (fieldLayout != null) {
-            visionPoseEstimator = new PhotonPoseEstimator(fieldLayout, robotToCam);
+            visionPoseEstimator = new PhotonPoseEstimator(fieldLayout, VisionConstants.kRobotToCam);
         } else {
             visionPoseEstimator = null;
         }
 
         if (RobotBase.isSimulation()) {
-            initializeSimulation(robotToCam);
+            initializeSimulation(VisionConstants.kRobotToCam);
         } else {
             visionSim = null;
             cameraSim = null;
@@ -194,9 +175,15 @@ public class Vision extends SubsystemBase {
         List<PhotonTrackedTarget> targets = latest.getTargets();
         PhotonTrackedTarget bestTarget = latest.getBestTarget();
 
-        if (bestTarget.getPoseAmbiguity() < 0.075) {
-            estimatedPose = visionPoseEstimator.estimateCoprocMultiTagPose(latest)
-                    .or(() -> visionPoseEstimator.estimateLowestAmbiguityPose(latest));
+        if (targets.size() > 1) {
+            estimatedPose = visionPoseEstimator.estimateCoprocMultiTagPose(latest);
+            multiTag = true;
+        } else if (bestTarget.poseAmbiguity < 0.1) {
+            estimatedPose = visionPoseEstimator.estimateLowestAmbiguityPose(latest);
+            multiTag = false;
+        } else {
+            estimatedPose = Optional.empty();
+            return;
         }
 
         for (PhotonTrackedTarget target : targets) {
@@ -234,11 +221,12 @@ public class Vision extends SubsystemBase {
         if (estimatedPose.isPresent()) {
             Translation2d visionPose = getEstimatedPose2d().get().getTranslation();
             Rotation2d driveTrainRotation = drivetrain.getPose().getRotation();
-
             Pose2d pose = new Pose2d(visionPose, driveTrainRotation);
 
+            Matrix<N3, N1> stdDevs = multiTag ? VisionConstants.kMultiTagStdDevs : VisionConstants.kSingleTagStdDevs;
+
             drivetrain.addVisionMeasurement(pose, estimatedPose.get().timestampSeconds,
-                    VecBuilder.fill(0.5, 0.5, 500));
+                    stdDevs);
         }
     }
 
