@@ -183,7 +183,8 @@ public class Vision extends SubsystemBase {
 
         Matrix<N3, N1> stdDevs = multiTag ? VisionConstants.kMultiTagStdDevs : VisionConstants.kSingleTagStdDevs;
 
-        drivetrain.addVisionMeasurement(pose, estimatedPose.get().timestampSeconds, stdDevs);
+        // drivetrain.addVisionMeasurement(pose, estimatedPose.get().timestampSeconds,
+        // stdDevs);
     }
 
     public void reseedPose() {

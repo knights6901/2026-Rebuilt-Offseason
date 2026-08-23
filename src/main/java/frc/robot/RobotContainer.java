@@ -17,10 +17,12 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.Operator;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.drive.TunerConstants;
 
 public class RobotContainer {
-    private final Drive drivetrain = TunerConstants.createDrivetrain();
+    private final Drive drivetrain;
+    private final Vision vision;
 
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(kMaxSpeed * kTranslationDeadband)
@@ -30,6 +32,9 @@ public class RobotContainer {
     private final CommandXboxController driver = new CommandXboxController(Operator.kDriverControllerPort);
 
     public RobotContainer() {
+        drivetrain = TunerConstants.createDrivetrain();
+        vision = new Vision(drivetrain);
+
         configureBindings();
     }
 
