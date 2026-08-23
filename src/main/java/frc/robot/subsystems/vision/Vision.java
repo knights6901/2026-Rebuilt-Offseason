@@ -1,4 +1,5 @@
 package frc.robot.subsystems.vision;
+import frc.robot.Robot;
 import frc.robot.subsystems.drive.Drive;
 
 import java.util.List;
@@ -11,17 +12,10 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
-import org.photonvision.simulation.PhotonCameraSim;
-import org.photonvision.simulation.SimCameraProperties;
-import org.photonvision.simulation.VisionSystemSim;
-
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -29,7 +23,6 @@ import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -46,14 +39,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Vision extends SubsystemBase {
     private final PhotonCamera photonCam;
     private final Drive drivetrain;
+    private VisionSim visionSim;
 
     private final PhotonPoseEstimator visionPoseEstimator;
 
     // not final because setting fieldLayout wasn't working without try/catch
-    private AprilTagFieldLayout fieldLayout;
-
-    private VisionSystemSim visionSim;
-    private PhotonCameraSim cameraSim;
 
     
     // for sim + logging so we can test easier
@@ -82,19 +72,18 @@ public class Vision extends SubsystemBase {
     public Vision(Drive drivetrain) {
         photonCam = new PhotonCamera(VisionConstants.arducamName);
 
-        this.drivetrain = drivetrain;
-
-        if (fieldLayout != null) {
-            visionPoseEstimator = new PhotonPoseEstimator(fieldLayout, VisionConstants.kRobotToCam);
-        } else {
-            visionPoseEstimator = null;
-        }
-
-        if (RobotBase.isSimulation()) {
-            initializeSimulation(VisionConstants.kRobotToCam);
+        if (Robot.isSimulation()) {
+            visionSim = new VisionSim(drivetrain, photonCam);
         } else {
             visionSim = null;
-            cameraSim = null;
+        }
+
+        this.drivetrain = drivetrain;
+
+        if (VisionConstants.kTagLayout != null) {
+            visionPoseEstimator = new PhotonPoseEstimator(VisionConstants.kTagLayout, VisionConstants.kRobotToCam);
+        } else {
+            visionPoseEstimator = null;
         }
 
         tagPublisher = NetworkTableInstance.getDefault().getStructArrayTopic("visibleTags", Pose3d.struct).publish();
@@ -120,34 +109,7 @@ public class Vision extends SubsystemBase {
         return visibleTagIds;
     }
 
-    /**
-     * Sets up the PhotonVision simulation environment with a simulated camera
-     * matching the physical camera's transform.
-     *
-     * @param robotToCam the 3D transform from the robot origin to the camera
-     */
-    private void initializeSimulation(Transform3d robotToCam) {
-        visionSim = new VisionSystemSim("main");
-        if (fieldLayout != null) {
-            visionSim.addAprilTags(fieldLayout);
-        }
-        SimCameraProperties cameraProp = new SimCameraProperties();
-
-        cameraProp.setCalibration(640, 480, Rotation2d.fromDegrees(100));
-        cameraProp.setCalibError(.25, 0.88);
-        cameraProp.setFPS(60);
-        cameraProp.setAvgLatencyMs(35);
-        cameraProp.setLatencyStdDevMs(5);
-        cameraSim = new PhotonCameraSim(photonCam, cameraProp);
-
-        cameraSim.enableRawStream(true);
-        cameraSim.enableProcessedStream(true);
-        cameraSim.enableDrawWireframe(true);
-
-        visionSim.addCamera(cameraSim, robotToCam);
-
-        SmartDashboard.putData("VisionSim", visionSim.getDebugField());
-    }
+    
 
     @Override
     public void periodic() {
@@ -187,7 +149,7 @@ public class Vision extends SubsystemBase {
         }
 
         for (PhotonTrackedTarget target : targets) {
-            Optional<Pose3d> tagPose = fieldLayout.getTagPose(target.getFiducialId());
+            Optional<Pose3d> tagPose = VisionConstants.kTagLayout.getTagPose(target.getFiducialId());
             tagPose.ifPresent(visibleTagPoses::add);
             visibleTagIds.add(target.getFiducialId());
         }
@@ -206,11 +168,6 @@ public class Vision extends SubsystemBase {
                 }
             }
         }
-    }
-
-    @Override
-    public void simulationPeriodic() {
-        visionSim.update(drivetrain.getPose());
     }
 
     public Optional<Pose2d> getEstimatedPose2d() {
