@@ -7,10 +7,6 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
 
 import static edu.wpi.first.units.Units.Inches;
 
@@ -33,15 +29,50 @@ public final class VisionConstants {
     public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout
             .loadField(AprilTagFields.kDefaultField);
 
-    // values need to be heavily tested and tuned
-    public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
-    public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
+    /*
+     * Standard deviation model. The XY standard deviation handed to the pose
+     * estimator grows with the square of the tag distance and shrinks with the
+     * number of tags used:
+     *
+     * xyStdDev = base * (1 + avgTagDist^2 / kDistanceDivisor) / numTags
+     *
+     * These are starting values and need to be tuned on the field against the
+     * Vision/Residual log key.
+     */
+    public static final double kSingleTagXYStdDevBase = 0.15;
+    public static final double kMultiTagXYStdDevBase = 0.06;
+    public static final double kDistanceDivisor = 30.0;
+
+    /**
+     * Standard deviation reported for the heading component of every vision
+     * measurement. Vision never corrects heading -- the gyro is treated as truth --
+     * so this is made large enough that the Kalman gain for theta is effectively
+     * zero. Large but finite, to avoid overflow inside the filter.
+     */
+    public static final double kThetaStdDev = 1e6;
 
     /** Discard a pipeline result older than this many seconds. */
     public static final double kMaxResultAgeSeconds = 0.2;
 
-    /** Above this ambiguity, a single-tag pose estimate is discarded. */
-    public static final double kMaxSingleTagAmbiguity = 0.1;
+    /** Discard an estimate whose average camera-to-tag distance exceeds this. */
+    public static final double kMaxTagDistanceMeters = 5.0;
+
+    /**
+     * Discard a 3D estimate that puts the robot this far above or below the floor.
+     */
+    public static final double kMaxZErrorMeters = 0.30;
+
+    /** Discard a 3D estimate with more roll or pitch than this. */
+    public static final double kMaxTiltRadians = Math.toRadians(10);
+
+    /**
+     * Discard estimates taken while spinning faster than this, since rolling
+     * shutter smear corrupts the tag corners.
+     */
+    public static final double kMaxAngularRateRadPerSec = Math.toRadians(360);
+
+    /** How far outside the field an estimate may land before it is discarded. */
+    public static final double kFieldBorderMarginMeters = 0.30;
 
     /** Simulated camera resolution, in pixels. */
     public static final int kSimCameraWidthPx = 640;

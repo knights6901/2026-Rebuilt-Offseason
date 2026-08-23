@@ -57,6 +57,17 @@ public class RobotContainer {
                         .withVelocityX(driver.getLeftY() * kMaxSpeed)
                         .withVelocityY(driver.getLeftX() * kMaxSpeed)
                         .withRotationalRate(-driver.getRightX() * kMaxAngularRate)));
+
+        /*
+         * Panic switch: hold to shut vision out of the pose estimator entirely, in case
+         * a bad estimate starts dragging the pose around mid-match. Deliberately has no
+         * subsystem requirement, so it cannot cancel the drive default command.
+         */
+        driver.back().whileTrue(
+                Commands.startEnd(
+                        () -> vision.setFusionEnabled(false),
+                        () -> vision.setFusionEnabled(true))
+                        .ignoringDisable(true));
     }
 
     public Command getAutonomousCommand() {
