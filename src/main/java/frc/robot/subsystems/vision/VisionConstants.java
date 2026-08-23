@@ -35,4 +35,10 @@ public final class VisionConstants {
         // values need to be heavily tested and tuned
         public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
         public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
+
+        /** Discard a pipeline result older than this many seconds. */
+        public static final double kMaxResultAgeSeconds = 0.6901;
+
+        /** Above this ambiguity, a single-tag pose estimate is discarded. */
+        public static final double kMaxSingleTagAmbiguity = 0.1;
 }

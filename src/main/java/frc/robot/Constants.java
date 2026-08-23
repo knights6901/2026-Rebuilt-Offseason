@@ -2,8 +2,7 @@ package frc.robot;
 
 /**
  * Constants that aren't owned by a single subsystem. Subsystem-specific values
- * belong in that subsystem's package (e.g.
- * {@link frc.robot.subsystems.drive.DriveConstants}).
+ * belong in that subsystem's package.
  */
 public final class Constants {
     public static final class Operator {
