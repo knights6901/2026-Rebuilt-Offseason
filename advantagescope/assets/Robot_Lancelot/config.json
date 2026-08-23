@@ -1,0 +1,23 @@
+{
+    "name": "Lancelot",
+    "rotations": [
+        { "axis": "y", "degrees": 180 },
+        { "axis": "z", "degrees": -90 }
+    ],
+    "position": [0, 0, 0.125],
+    "cameras": [
+        {
+            "name": "arducam",
+            "isFTC": false,
+            "rotations": [
+                { "axis": "z", "degrees": 180 },
+                { "axis": "y", "degrees": 0 }
+            ],
+            "position": [-0.3302, 0, 0.1651],
+            "resolution": [640, 480],
+            "fov": 100
+        }
+    ],
+    "components": {
+    }
+}

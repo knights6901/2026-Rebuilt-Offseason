@@ -1,0 +1,146 @@
+{
+  "hubs": [
+    {
+      "x": 56,
+      "y": 202,
+      "width": 1617,
+      "height": 1027,
+      "state": {
+        "sidebar": {
+          "width": 300,
+          "expanded": [
+            "/DSLog",
+            "/Log1",
+            "/Log0",
+            "/Log0/Phoenix6",
+            "/Log0/DriveState",
+            "/DS",
+            "/DS/joystick0",
+            "/Log1/DS",
+            "/Log1/DS/joystick0",
+            "/Log0/DriveState/Speeds",
+            "/Log0/Phoenix6/CANcoder-10",
+            "/Log0/Phoenix6/TalonFX-1",
+            "/Shooter",
+            "/Robot",
+            "/Robot/Vision",
+            "/photonvision/photonCam"
+          ]
+        },
+        "tabs": {
+          "selected": 3,
+          "tabs": [
+            {
+              "type": 0,
+              "title": "",
+              "controller": null,
+              "controllerUUID": "q94i6x4o0wedxm9h4v3z0yyo594r774h",
+              "renderer": "",
+              "controlsHeight": 0
+            },
+            {
+              "type": 1,
+              "title": "Line Graph",
+              "controller": {
+                "leftSources": [],
+                "rightSources": [],
+                "discreteSources": [],
+                "leftLockedRange": null,
+                "rightLockedRange": null,
+                "leftUnitConversion": {
+                  "autoTarget": null,
+                  "preset": null
+                },
+                "rightUnitConversion": {
+                  "autoTarget": null,
+                  "preset": null
+                },
+                "leftFilter": 0,
+                "rightFilter": 0
+              },
+              "controllerUUID": "zmxjxnznjcx1z1vb1dx2q6q9l5d7336l",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 2,
+              "title": "2D Field",
+              "controller": {
+                "sources": [
+                  {
+                    "type": "robot",
+                    "logKey": "NT:RobotPose",
+                    "logType": "Pose3d",
+                    "visible": false,
+                    "options": {
+                      "bumpers": ""
+                    }
+                  }
+                ],
+                "field": "FRC:2026 Field",
+                "orientation": 2,
+                "size": "large"
+              },
+              "controllerUUID": "yos0hpkol3cvoipke71obr1v1eq69qmg",
+              "renderer": null,
+              "controlsHeight": 200
+            },
+            {
+              "type": 3,
+              "title": "3D Field",
+              "controller": {
+                "sources": [
+                  {
+                    "type": "robot",
+                    "logKey": "NT:/DriveState/Pose",
+                    "logType": "Pose2d",
+                    "visible": true,
+                    "options": {
+                      "model": "Lancelot"
+                    }
+                  },
+                  {
+                    "type": "ghost",
+                    "logKey": "NT:/Robot/Vision/EstimatedPose",
+                    "logType": "Pose3d",
+                    "visible": true,
+                    "options": {
+                      "model": "Lancelot",
+                      "color": "#00ff00"
+                    }
+                  },
+                  {
+                    "type": "axes",
+                    "logKey": "NT:/Robot/Vision/VisibleTagPoses",
+                    "logType": "Pose3d[]",
+                    "visible": true,
+                    "options": {}
+                  }
+                ],
+                "game": "FRC:2026 Field"
+              },
+              "controllerUUID": "3gjctojwostymq9bm7x0k5141l6411ro",
+              "renderer": {
+                "cameraIndex": -2,
+                "orbitFov": 50,
+                "cameraPosition": [
+                  0.7829706599506208,
+                  1.1091094681827114,
+                  1.1504415351858381
+                ],
+                "cameraTarget": [
+                  -0.05254981664604793,
+                  0.5025238137463497,
+                  0.10383772641892103
+                ]
+              },
+              "controlsHeight": 200
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "satellites": [],
+  "version": "26.0.0"
+}
