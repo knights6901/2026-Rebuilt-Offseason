@@ -30,26 +30,32 @@ public final class SlapdownConstants {
     /** The gear ratio of the slapdown system. */
     public final static double GearRatio = 81.0;
 
-    // Down gains, will need tuning after intake modification
+    /**
+     * PID/feedforward gains for driving down to the intake position. Needs tuning
+     * after intake modification.
+     */
     public final static Slot0Configs DownGains = new Slot0Configs()
-                    .withKP(0.4).withKI(0).withKD(0.1)
-                    .withKS(0).withKV(1.3); 
-    
-    // Up gains, needs to be tuned heavily
+            .withKP(0.4).withKI(0).withKD(0.1)
+            .withKS(0).withKV(1.3);
+
+    /**
+     * PID/feedforward gains for driving up to the home position. Needs heavy
+     * tuning.
+     */
     public final static Slot1Configs UpGains = new Slot1Configs()
-                    .withKP(0).withKI(0).withKD(0)
-                    .withKS(0).withKV(0);
+            .withKP(0).withKI(0).withKD(0)
+            .withKS(0).withKV(0);
 
     /** The complete motor configuration for the slapdown system. */
     public final static TalonFXConfiguration MotorConfig = new TalonFXConfiguration()
-                    .withSlot0(SlapdownConstants.DownGains)
-                    .withSlot1(SlapdownConstants.UpGains)
-                    .withMotorOutput(new MotorOutputConfigs()
-                                    .withNeutralMode(NeutralModeValue.Brake)
-                                    .withInverted(InvertedValue.CounterClockwise_Positive))
-                    .withCurrentLimits(new CurrentLimitsConfigs()
-                                    .withStatorCurrentLimit(Amps.of(40))
-                                    .withStatorCurrentLimitEnable(true)
-                                    .withSupplyCurrentLimit(Amps.of(60))
-                                    .withSupplyCurrentLimitEnable(true));
+            .withSlot0(SlapdownConstants.DownGains)
+            .withSlot1(SlapdownConstants.UpGains)
+            .withMotorOutput(new MotorOutputConfigs()
+                    .withNeutralMode(NeutralModeValue.Brake)
+                    .withInverted(InvertedValue.CounterClockwise_Positive))
+            .withCurrentLimits(new CurrentLimitsConfigs()
+                    .withStatorCurrentLimit(Amps.of(40))
+                    .withStatorCurrentLimitEnable(true)
+                    .withSupplyCurrentLimit(Amps.of(60))
+                    .withSupplyCurrentLimitEnable(true));
 }

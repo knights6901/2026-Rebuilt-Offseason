@@ -22,6 +22,7 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.kicker.Kicker;
+import frc.robot.subsystems.slapdown.Slapdown;
 import frc.robot.subsystems.led.LED;
 
 public class RobotContainer {
@@ -29,6 +30,7 @@ public class RobotContainer {
     private final Vision vision;
     private final Indexer indexer;
     private final Kicker kicker;
+    private final Slapdown slapdown;
     private final LED led;
 
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -43,6 +45,7 @@ public class RobotContainer {
         vision = new Vision(drivetrain);
         indexer = new Indexer();
         kicker = new Kicker();
+        slapdown = new Slapdown();
         led = new LED(drivetrain);
 
         configureBindings();

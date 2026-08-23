@@ -4,6 +4,7 @@ import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -34,5 +35,10 @@ public class Kicker extends SubsystemBase {
     /** Stops the kicker motor by applying neutral output. */
     public Command stop() {
         return run(() -> m_motor.setControl(new NeutralOut()));
+    }
+
+    @Override
+    public void periodic() {
+        DogLog.log("Kicker/CurrentRPS", m_motor.getVelocity().getValue());
     }
 }

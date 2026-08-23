@@ -147,19 +147,11 @@ public class Shooter extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (shooterState == ShooterState.MANUAL) {
-            DogLog.log("Shooter/State", shootRPS.in(RotationsPerSecond) + " (MANUAL)");
-        } else if (shooterState == ShooterState.AUTOHUB_PRIMING) {
-            DogLog.log("Shooter/State", "PRIMING AUTOHUB");
-        } else if (shooterState == ShooterState.AUTOPASS_PRIMING) {
-            DogLog.log("Shooter/State", "PRIMING AUTOPASS");
-        } else {
-            DogLog.log("Shooter/State", shooterState.toString());
-        }
-
-        DogLog.log("Shooter/ActualRPS", getCurrentRPS().in(RotationsPerSecond));
-        DogLog.log("Shooter/TargetRPS", targetRPS.in(RotationsPerSecond));
-        DogLog.log("Shooter/ManualRPS", shootRPS.in(RotationsPerSecond));
+        DogLog.log("Shooter/State", shooterState);
+        DogLog.log("Shooter/Primed", primed.getAsBoolean());
+        DogLog.log("Shooter/ActualRPS", getCurrentRPS());
+        DogLog.log("Shooter/TargetRPS", targetRPS);
+        DogLog.log("Shooter/ManualRPS", shootRPS);
     }
 
     /** Returns a command that primes the shooter to the default prime RPS. */

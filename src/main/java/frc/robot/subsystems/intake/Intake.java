@@ -85,6 +85,7 @@ public class Intake extends SubsystemBase {
             intakeState = IntakeState.OFF;
         }
 
-        DogLog.log("Intake/State", intakeState.toString());
+        DogLog.log("Intake/State", intakeState);
+        DogLog.log("Intake/CurrentRPS", m_motor.getVelocity().getValue());
     }
 }

@@ -4,6 +4,8 @@ import static edu.wpi.first.units.Units.Percent;
 import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 
+import java.util.Map;
+
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.util.Color;
 
@@ -28,4 +30,24 @@ public final class LEDConstants {
             .rainbow(255, 128);
     public static final LEDPattern ScrollRainbowPattern = RainbowPattern.scrollAtRelativeSpeed(
             Percent.per(Second).of(120));
+
+    /**
+     * Human-readable names for the named patterns above, keyed by instance
+     * identity.
+     */
+    private static final Map<LEDPattern, String> Names = Map.of(
+            Off, "Off",
+            Red, "Red",
+            Purple, "Purple",
+            FlashingPurple, "FlashingPurple",
+            RainbowPattern, "Rainbow",
+            ScrollRainbowPattern, "ScrollRainbow");
+
+    /**
+     * The name of {@code pattern} if it's one of the named constants above, else
+     * "Custom".
+     */
+    public static String nameOf(LEDPattern pattern) {
+        return Names.getOrDefault(pattern, "Custom");
+    }
 }

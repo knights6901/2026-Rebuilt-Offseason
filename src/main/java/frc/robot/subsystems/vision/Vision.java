@@ -108,11 +108,10 @@ public class Vision extends SubsystemBase {
                 visibleTagIds.add(target.getFiducialId());
             }
 
-            DogLog.log("Vision/VisibleTagPoses", visibleTagPoses.toArray(new Pose3d[0]));
-
             estimatedPose = estimatePose(latest);
         }
 
+        DogLog.log("Vision/VisibleTagPoses", visibleTagPoses.toArray(new Pose3d[0]));
         DogLog.log("Vision/SeeingAprilTag", estimatedPose.isPresent());
 
         if (estimatedPose.isPresent()) {
