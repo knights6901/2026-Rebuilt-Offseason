@@ -1,4 +1,5 @@
 package frc.robot.subsystems.shooter;
+import frc.robot.subsystems.indexer.*;
 
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecondPerSecond;
@@ -232,7 +233,7 @@ public class Shooter extends SubsystemBase {
     public Command manuallyShoot(
             Supplier<AngularVelocity> rpsSupplier,
             KickerSubsystem kicker,
-            IndexerSubsystem indexer) {
+            Indexer indexer) {
         return new ShootCommand(
                 this, kicker, indexer,
                 rpsSupplier,
@@ -248,7 +249,7 @@ public class Shooter extends SubsystemBase {
             Supplier<Pose2d> currentPoseSupplier,
             Translation3d target,
             KickerSubsystem kicker,
-            IndexerSubsystem indexer,
+            Indexer indexer,
             ShooterState primingState,
             ShooterState shootingState) {
         Supplier<AngularVelocity> rpsSupplier = () -> {
@@ -271,7 +272,7 @@ public class Shooter extends SubsystemBase {
     public Command autoAimShoot(
             Supplier<Pose2d> currentPoseSupplier,
             KickerSubsystem kicker,
-            IndexerSubsystem indexer) {
+            Indexer indexer) {
         Translation2d hubXY = GameConstants.getHubLocation();
         Translation3d hub = new Translation3d(
                 hubXY.getMeasureX(),
@@ -288,7 +289,7 @@ public class Shooter extends SubsystemBase {
     public Command passShoot(
             Supplier<Pose2d> currentPoseSupplier,
             KickerSubsystem kicker,
-            IndexerSubsystem indexer) {
+            Indexer indexer) {
         return shootAtTarget(
                 currentPoseSupplier,
                 new Translation3d(GameConstants.getPassLocation(currentPoseSupplier.get())),
