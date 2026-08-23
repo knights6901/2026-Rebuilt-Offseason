@@ -20,6 +20,7 @@ import frc.robot.subsystems.drive.Drive;
 public class LED extends SubsystemBase {
     private final AddressableLED led;
     private final AddressableLEDBuffer buffer;
+
     private final AddressableLEDBufferView left;
     private final AddressableLEDBufferView middle;
     private final AddressableLEDBufferView right;
