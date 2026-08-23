@@ -18,9 +18,9 @@ public final class IndexerConstants {
 
     /** The complete motor configuration for the indexer system. */
     public final static TalonFXConfiguration MotorConfig = new TalonFXConfiguration()
-                    .withMotorOutput(new MotorOutputConfigs()
-                                    .withNeutralMode(NeutralModeValue.Coast)
-                                    .withInverted(InvertedValue.CounterClockwise_Positive));
+            .withMotorOutput(new MotorOutputConfigs()
+                    .withNeutralMode(NeutralModeValue.Coast)
+                    .withInverted(InvertedValue.CounterClockwise_Positive));
     // .withCurrentLimits(new CurrentLimitsConfigs()
     // .withStatorCurrentLimit(Amps.of(40))
     // .withStatorCurrentLimitEnable(true)

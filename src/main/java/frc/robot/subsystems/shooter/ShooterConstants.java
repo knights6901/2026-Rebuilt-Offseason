@@ -47,8 +47,8 @@ public final class ShooterConstants {
 
     /** The PID and feedforward settings for the shooter motors. */
     public final static Slot0Configs Gains = new Slot0Configs()
-                    .withKP(0.36901).withKI(0).withKD(0.0085)
-                    .withKS(0).withKV(0.119);
+            .withKP(0.36901).withKI(0).withKD(0.0085)
+            .withKS(0).withKV(0.119);
 
     /** The strength of gravity (9.81 m/s²). */
     public final static LinearAcceleration G = MetersPerSecondPerSecond.of(9.81);
@@ -74,13 +74,13 @@ public final class ShooterConstants {
 
     /** The complete motor configuration for the shooter system. */
     public static final TalonFXConfiguration MotorConfig = new TalonFXConfiguration()
-                    .withSlot0(ShooterConstants.Gains)
-                    .withMotorOutput(new MotorOutputConfigs()
-                                    .withNeutralMode(NeutralModeValue.Coast)
-                                    .withInverted(InvertedValue.CounterClockwise_Positive))
-                    .withCurrentLimits(new CurrentLimitsConfigs()
-                                    .withStatorCurrentLimit(Amps.of(40))
-                                    .withStatorCurrentLimitEnable(true)
-                                    .withSupplyCurrentLimit(Amps.of(60))
-                                    .withSupplyCurrentLimitEnable(true));
+            .withSlot0(ShooterConstants.Gains)
+            .withMotorOutput(new MotorOutputConfigs()
+                    .withNeutralMode(NeutralModeValue.Coast)
+                    .withInverted(InvertedValue.CounterClockwise_Positive))
+            .withCurrentLimits(new CurrentLimitsConfigs()
+                    .withStatorCurrentLimit(Amps.of(40))
+                    .withStatorCurrentLimitEnable(true)
+                    .withSupplyCurrentLimit(Amps.of(60))
+                    .withSupplyCurrentLimitEnable(true));
 }

@@ -10,7 +10,6 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import java.util.function.Supplier;
 
-import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.NeutralOut;
@@ -32,6 +31,7 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.CANConstants;
 import frc.robot.Constants.GameConstants;
 
 /**
@@ -44,8 +44,8 @@ import frc.robot.Constants.GameConstants;
  * for distance-based shot speed.
  */
 public class Shooter extends SubsystemBase {
-    private final TalonFX m_motorRight = new TalonFX(ShooterConstants.RightMotorId, new CANBus("rio"));
-    private final TalonFX m_motorLeft = new TalonFX(ShooterConstants.LeftMotorId, new CANBus("rio"));
+    private final TalonFX m_motorRight = new TalonFX(ShooterConstants.RightMotorId, CANConstants.kSubsystemNetwork);
+    private final TalonFX m_motorLeft = new TalonFX(ShooterConstants.LeftMotorId, CANConstants.kSubsystemNetwork);
     private final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
 
     /** The possible states of the shooter mechanism. */
