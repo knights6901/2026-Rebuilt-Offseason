@@ -4,38 +4,44 @@
 
 package frc.robot;
 
+import static frc.robot.subsystems.drive.DriveConstants.kMaxAngularRate;
+import static frc.robot.subsystems.drive.DriveConstants.kMaxSpeed;
+import static frc.robot.subsystems.drive.DriveConstants.kRotationDeadband;
+import static frc.robot.subsystems.drive.DriveConstants.kTranslationDeadband;
+
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.subsystems.Drivetrain.DrivetrainConstants;
-import frc.robot.subsystems.Drivetrain.Drivetrain;
+import frc.robot.Constants.Operator;
+import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.drive.TunerConstants;
 
 public class RobotContainer {
-  private static Drivetrain drivetrain = DrivetrainConstants.createDrivetrain();
+    private final Drive drivetrain = TunerConstants.createDrivetrain();
 
-  private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-      .withDeadband(DrivetrainConstants.MaxSpeed * 0.1)
-      .withRotationalDeadband(DrivetrainConstants.MaxAngularRate * 0.1)
-      .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+    private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
+            .withDeadband(kMaxSpeed * kTranslationDeadband)
+            .withRotationalDeadband(kMaxAngularRate * kRotationDeadband)
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
-  private final CommandXboxController driver = new CommandXboxController(0);
+    private final CommandXboxController driver = new CommandXboxController(Operator.kDriverControllerPort);
 
-  public RobotContainer() {
-    configureBindings();
-  }
+    public RobotContainer() {
+        configureBindings();
+    }
 
-  private void configureBindings() {
-    drivetrain.setDefaultCommand(
-        drivetrain.applyRequest(() -> drive
-            .withVelocityX(driver.getLeftY() * DrivetrainConstants.MaxSpeed)
-            .withVelocityY(driver.getLeftX() * DrivetrainConstants.MaxSpeed)
-            .withRotationalRate(-driver.getRightX() * DrivetrainConstants.MaxAngularRate)));
-  }
+    private void configureBindings() {
+        drivetrain.setDefaultCommand(
+                drivetrain.applyRequest(() -> drive
+                        .withVelocityX(driver.getLeftY() * kMaxSpeed)
+                        .withVelocityY(driver.getLeftX() * kMaxSpeed)
+                        .withRotationalRate(-driver.getRightX() * kMaxAngularRate)));
+    }
 
-  public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
-  }
+    public Command getAutonomousCommand() {
+        return Commands.print("No autonomous command configured");
+    }
 }
