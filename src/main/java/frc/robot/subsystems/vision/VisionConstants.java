@@ -69,8 +69,10 @@ public final class VisionConstants {
      * Discard estimates taken while spinning faster than this, since rolling
      * shutter smear corrupts the tag corners.
      */
-    public static final double kMaxAngularRateRadPerSec = Math.toRadians(360);
+    public static final double kMaxAngularRateRadPerSec = Math.toRadians(180);
 
+    public static final double kMaxLinearRateMPerSec = 2.5;
+    
     /** How far outside the field an estimate may land before it is discarded. */
     public static final double kFieldBorderMarginMeters = 0.30;
 
