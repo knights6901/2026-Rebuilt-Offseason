@@ -22,6 +22,7 @@ import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.kicker.Kicker;
+import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.slapdown.Slapdown;
 import frc.robot.subsystems.led.LED;
 
@@ -30,6 +31,7 @@ public class RobotContainer {
     private final Vision vision;
     private final Indexer indexer;
     private final Kicker kicker;
+    private final Shooter shooter;
     private final Slapdown slapdown;
     private final LED led;
 
@@ -45,6 +47,7 @@ public class RobotContainer {
         vision = new Vision(drivetrain);
         indexer = new Indexer();
         kicker = new Kicker();
+        shooter = new Shooter();
         slapdown = new Slapdown();
         led = new LED(drivetrain);
 
@@ -57,6 +60,9 @@ public class RobotContainer {
                         .withVelocityX(driver.getLeftY() * kMaxSpeed)
                         .withVelocityY(driver.getLeftX() * kMaxSpeed)
                         .withRotationalRate(-driver.getRightX() * kMaxAngularRate)));
+
+        driver.a().onTrue(slapdown.slapdown());
+        driver.b().onTrue(slapdown.retractSlapdown());
 
         /*
          * Panic switch: hold to shut vision out of the pose estimator entirely, in case

@@ -38,7 +38,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  * <p>
  * Vision only ever corrects the <i>translation</i> of the drivetrain pose. The
  * gyro is treated as the sole source of truth for heading, because CTRE's
- * field-centric swerve requests take "forward" from the fused pose's rotation --
+ * field-centric swerve requests take "forward" from the fused pose's rotation
+ * --
  * letting vision rotate the pose would move the driver's forward direction out
  * from under them mid-match.
  */
