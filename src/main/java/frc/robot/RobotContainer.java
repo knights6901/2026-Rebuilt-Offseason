@@ -25,6 +25,7 @@ import frc.robot.subsystems.kicker.Kicker;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.slapdown.Slapdown;
 import frc.robot.subsystems.led.LED;
+import frc.robot.subsystems.led.LEDConstants;
 
 public class RobotContainer {
     private final Drive drivetrain;
@@ -52,6 +53,7 @@ public class RobotContainer {
         led = new LED(drivetrain);
 
         configureBindings();
+        configureDefaultCommands();
     }
 
     private void configureBindings() {
@@ -74,6 +76,10 @@ public class RobotContainer {
                         () -> vision.setFusionEnabled(false),
                         () -> vision.setFusionEnabled(true))
                         .ignoringDisable(true));
+    }
+
+    private void configureDefaultCommands() {
+        // led.setDefaultCommand(led.runPattern(LEDConstants.ScrollRainbowPattern));
     }
 
     public Command getAutonomousCommand() {
