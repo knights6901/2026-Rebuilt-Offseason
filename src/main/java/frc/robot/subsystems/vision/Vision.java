@@ -153,14 +153,14 @@ public class Vision extends SubsystemBase {
             adjustDrivetrainPose(estimate.get());
         }
         
-        DogLog.log("Vision/SeeingAprilTag", estimatedPose.isPresent());
-        DogLog.log("Vision/VisibleTagPoses", visibleTagPoses.toArray(new Pose3d[0]));
-        DogLog.log("Vision/FusionEnabled", fusionEnabled);
+        // DogLog.log("Vision/SeeingAprilTag", estimatedPose.isPresent());
+        // DogLog.log("Vision/VisibleTagPoses", visibleTagPoses.toArray(new Pose3d[0]));
+        // DogLog.log("Vision/FusionEnabled", fusionEnabled);
         
 
         estimatedPose.ifPresent(pose -> {
             visionField.setRobotPose(pose.estimatedPose.toPose2d());
-            DogLog.log("Vision/EstimatedPose", pose.estimatedPose);
+            // DogLog.log("Vision/EstimatedPose", pose.estimatedPose);
         });
     }
 
@@ -212,14 +212,14 @@ public class Vision extends SubsystemBase {
         int numTags = estimate.targetsUsed.size();
         double avgTagDistance = averageTagDistance(estimate);
 
-        DogLog.log("Vision/NumTags", numTags);
-        DogLog.log("Vision/AvgTagDistance", avgTagDistance);
-        DogLog.log("Vision/Residual",
-                pose2d.getTranslation().minus(drivetrain.getPose().getTranslation()).getNorm());
+        // DogLog.log("Vision/NumTags", numTags);
+        // DogLog.log("Vision/AvgTagDistance", avgTagDistance);
+        // DogLog.log("Vision/Residual",
+                // pose2d.getTranslation().minus(drivetrain.getPose().getTranslation()).getNorm());
 
         String rejection = rejectionReason(estimate, avgTagDistance, numTags);
-        DogLog.log("Vision/Accepted", rejection == null);
-        DogLog.log("Vision/RejectionReason", rejection == null ? "" : rejection);
+        // DogLog.log("Vision/Accepted", rejection == null);
+        // DogLog.log("Vision/RejectionReason", rejection == null ? "" : rejection);
 
         if (rejection != null) {
             return;
@@ -246,7 +246,7 @@ public class Vision extends SubsystemBase {
                 * (1 + Math.pow(avgTagDistance, 2) / VisionConstants.kDistanceDivisor)
                 / numTags;
 
-        DogLog.log("Vision/XYStdDev", xyStdDev);
+        // DogLog.log("Vision/XYStdDev", xyStdDev);
 
         /*
          * Heading is taken from the drivetrain rather than from vision, and paired with

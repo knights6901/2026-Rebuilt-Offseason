@@ -1,5 +1,6 @@
 package frc.robot.subsystems.intake;
 
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -41,7 +42,8 @@ public class Intake extends SubsystemBase {
     /** Returns a command that runs the rollers inward at {@code rps}. */
     public Command intake(AngularVelocity rps) {
         return run(() -> {
-            m_motor.setControl(new VelocityVoltage(rps));
+            // m_motor.setControl(new VelocityVoltage(rps));
+            m_motor.setControl(new DutyCycleOut(0.85));
             intaking = true;
         });
     }
@@ -85,7 +87,7 @@ public class Intake extends SubsystemBase {
             intakeState = IntakeState.OFF;
         }
 
-        DogLog.log("Intake/State", intakeState);
-        DogLog.log("Intake/CurrentRPS", m_motor.getVelocity().getValue());
+        // DogLog.log("Intake/State", intakeState);
+        // DogLog.log("Intake/CurrentRPS", m_motor.getVelocity().getValue());
     }
 }

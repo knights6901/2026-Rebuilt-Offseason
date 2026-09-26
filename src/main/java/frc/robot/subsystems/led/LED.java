@@ -119,8 +119,8 @@ public class LED extends SubsystemBase {
     public void periodic() {
         led.setData(buffer);
 
-        DogLog.log("LED/LeftPattern", leftPatternName);
-        DogLog.log("LED/MiddlePattern", middlePatternName);
-        DogLog.log("LED/RightPattern", rightPatternName);
+        // DogLog.log("LED/LeftPattern", leftPatternName);
+        // DogLog.log("LED/MiddlePattern", middlePatternName);
+        // DogLog.log("LED/RightPattern", rightPatternName);
     }
 }

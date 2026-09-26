@@ -147,11 +147,11 @@ public class Shooter extends SubsystemBase {
 
     @Override
     public void periodic() {
-        DogLog.log("Shooter/State", shooterState);
-        DogLog.log("Shooter/Primed", primed.getAsBoolean());
-        DogLog.log("Shooter/ActualRPS", getCurrentRPS());
-        DogLog.log("Shooter/TargetRPS", targetRPS);
-        DogLog.log("Shooter/ManualRPS", shootRPS);
+        // DogLog.log("Shooter/State", shooterState);
+        // DogLog.log("Shooter/Primed", primed.getAsBoolean());
+        // DogLog.log("Shooter/ActualRPS", getCurrentRPS());
+        // DogLog.log("Shooter/TargetRPS", targetRPS);
+        // DogLog.log("Shooter/ManualRPS", shootRPS);
     }
 
     /** Returns a command that primes the shooter to the default prime RPS. */

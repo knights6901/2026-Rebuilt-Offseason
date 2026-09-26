@@ -80,9 +80,9 @@ public class DriveToTarget extends Command {
 
         drivetrain.setControl(input.withVelocityX(vX).withVelocityY(vY).withRotationalRate(omega));
 
-        DogLog.log("DriveToTarget/ErrorX", targetX != null ? xController.getError() : 0, Meters);
-        DogLog.log("DriveToTarget/ErrorY", targetY != null ? yController.getError() : 0, Meters);
-        DogLog.log("DriveToTarget/ErrorTheta", targetTheta != null ? thetaController.getError() : 0, Radians);
+        // DogLog.log("DriveToTarget/ErrorX", targetX != null ? xController.getError() : 0, Meters);
+        // DogLog.log("DriveToTarget/ErrorY", targetY != null ? yController.getError() : 0, Meters);
+        // DogLog.log("DriveToTarget/ErrorTheta", targetTheta != null ? thetaController.getError() : 0, Radians);
     }
 
     @Override

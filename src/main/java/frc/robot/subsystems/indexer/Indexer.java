@@ -38,6 +38,6 @@ public class Indexer extends SubsystemBase {
 
     @Override
     public void periodic() {
-        DogLog.log("Indexer/CurrentRPS", m_motor.getVelocity().getValue());
+        // DogLog.log("Indexer/CurrentRPS", m_motor.getVelocity().getValue());
     }
 }

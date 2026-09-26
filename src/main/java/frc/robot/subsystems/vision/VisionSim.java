@@ -99,9 +99,9 @@ public class VisionSim extends SubsystemBase {
 
         Pose2d groundTruth = groundTruthOdometry.update(state.RawHeading, state.ModulePositions);
 
-        DogLog.log("VisionSim/GroundTruthPose", groundTruth);
-        DogLog.log("VisionSim/EstimateError",
-                drivetrain.getPose().getTranslation().minus(groundTruth.getTranslation()).getNorm());
+        // DogLog.log("VisionSim/GroundTruthPose", groundTruth);
+        // DogLog.log("VisionSim/EstimateError",
+        //         drivetrain.getPose().getTranslation().minus(groundTruth.getTranslation()).getNorm());
 
         visionSim.update(groundTruth);
     }

@@ -21,6 +21,7 @@ import frc.robot.subsystems.drive.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.vision.Vision;
 import frc.robot.subsystems.indexer.Indexer;
+import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.kicker.Kicker;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.slapdown.Slapdown;
@@ -31,10 +32,11 @@ public class RobotContainer {
     private final Drive drivetrain;
     private final Vision vision;
     private final Indexer indexer;
+    private final Intake intake;
     private final Kicker kicker;
+    private final LED led;
     private final Shooter shooter;
     private final Slapdown slapdown;
-    private final LED led;
 
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(kMaxSpeed * kTranslationDeadband)
@@ -47,30 +49,27 @@ public class RobotContainer {
         drivetrain = TunerConstants.createDrivetrain();
         vision = new Vision(drivetrain);
         indexer = new Indexer();
+        intake = new Intake();
         kicker = new Kicker();
+        led = new LED(drivetrain);
         shooter = new Shooter();
         slapdown = new Slapdown();
-        led = new LED(drivetrain);
 
         configureBindings();
         configureDefaultCommands();
     }
 
     private void configureBindings() {
-        drivetrain.setDefaultCommand(
-                drivetrain.applyRequest(() -> drive
-                        .withVelocityX(driver.getLeftY() * kMaxSpeed)
-                        .withVelocityY(driver.getLeftX() * kMaxSpeed)
-                        .withRotationalRate(-driver.getRightX() * kMaxAngularRate)));
-
         driver.a().onTrue(slapdown.slapdown());
         driver.b().onTrue(slapdown.retractSlapdown());
+        driver.leftTrigger().whileTrue(intake.intake());
 
         /*
          * Panic switch: hold to shut vision out of the pose estimator entirely, in case
          * a bad estimate starts dragging the pose around mid-match. Deliberately has no
          * subsystem requirement, so it cannot cancel the drive default command.
          */
+
         driver.back().whileTrue(
                 Commands.startEnd(
                         () -> vision.setFusionEnabled(false),
@@ -80,6 +79,13 @@ public class RobotContainer {
 
     private void configureDefaultCommands() {
         // led.setDefaultCommand(led.runPattern(LEDConstants.ScrollRainbowPattern));
+        intake.setDefaultCommand(intake.stop());
+
+        drivetrain.setDefaultCommand(
+                drivetrain.applyRequest(() -> drive
+                        .withVelocityX(driver.getLeftY() * kMaxSpeed)
+                        .withVelocityY(driver.getLeftX() * kMaxSpeed)
+                        .withRotationalRate(-driver.getRightX() * kMaxAngularRate)));
     }
 
     public Command getAutonomousCommand() {

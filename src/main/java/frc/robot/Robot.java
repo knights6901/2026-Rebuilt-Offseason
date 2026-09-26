@@ -92,9 +92,9 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotInit() {
-        DogLog.setOptions(new DogLogOptions()
-                .withCaptureDs(true)
-                .withCaptureConsole(true));
+        // DogLog.setOptions(new DogLogOptions()
+        //         .withCaptureDs(true)
+        //         .withCaptureConsole(true));
 
         // No controller is plugged into the simulator, so every button binding
         // reports an unplugged-joystick warning every loop. Keep the warning on a

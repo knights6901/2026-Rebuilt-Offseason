@@ -19,9 +19,6 @@ public final class IntakeConstants {
     /** The rotations per second for actively intaking balls. */
     public final static AngularVelocity IntakeRPS = RotationsPerSecond.of(85);
 
-    /** The gear ratio of the intake system. */
-    public final static double GearRatio = 9.0;
-
     /** PID and feedforward gains for the intake motor. */
     public final static Slot0Configs Gains = new Slot0Configs()
             .withKP(0.5).withKI(0).withKD(0)

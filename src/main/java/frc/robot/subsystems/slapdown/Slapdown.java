@@ -195,12 +195,12 @@ public class Slapdown extends SubsystemBase {
 
     @Override
     public void periodic() {
-        DogLog.log("Slapdown/State", getDeploymentState());
-        DogLog.log("Slapdown/Position", getSlapdownPosition());
+        // DogLog.log("Slapdown/State", getDeploymentState());
+        // DogLog.log("Slapdown/Position", getSlapdownPosition());
 
-        DogLog.log("Slapdown/Angle", getArmAngle());
+        // DogLog.log("Slapdown/Angle", getArmAngle());
 
-        DogLog.log("Slapdown/ComponentPoses", new Pose3d[] { getComponentPose() });
-        DogLog.log("Slapdown/ZeroedPose", new Pose3d[] { new Pose3d() });
+        // DogLog.log("Slapdown/ComponentPoses", new Pose3d[] { getComponentPose() });
+        // DogLog.log("Slapdown/ZeroedPose", new Pose3d[] { new Pose3d() });
     }
 }

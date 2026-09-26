@@ -39,6 +39,6 @@ public class Kicker extends SubsystemBase {
 
     @Override
     public void periodic() {
-        DogLog.log("Kicker/CurrentRPS", m_motor.getVelocity().getValue());
+        // DogLog.log("Kicker/CurrentRPS", m_motor.getVelocity().getValue());
     }
 }
