@@ -3,41 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.2756776034236803,
-        "y": 7.4572753209700435
+        "x": 7.625,
+        "y": 6.479
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.2756776034236825,
-        "y": 7.4572753209700435
+        "x": 7.627971888950892,
+        "y": 6.129518577938988
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.519557774607703,
-        "y": 7.159686162624822
+        "x": 7.625,
+        "y": 4.5705841936383935
       },
       "prevControl": {
-        "x": 6.761273181169758,
-        "y": 7.606069900142654
-      },
-      "nextControl": {
-        "x": 8.277842368045647,
-        "y": 6.71330242510699
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 8.32175463623395,
-        "y": 5.438844507845934
-      },
-      "prevControl": {
-        "x": 8.295877318116975,
-        "y": 6.215164051355207
+        "x": 7.6289404878162195,
+        "y": 4.862620314825149
       },
       "nextControl": null,
       "isLocked": false,
@@ -46,19 +30,15 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.5,
-      "rotationDegrees": 0.0
-    },
-    {
-      "waypointRelativePos": 0.9211087420042579,
+      "waypointRelativePos": 0.15,
       "rotationDegrees": -90.0
     }
   ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 1.4314652261985024,
-      "maxWaypointRelativePos": 2.0,
+      "minWaypointRelativePos": 0.5437285958904114,
+      "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 0.3,
         "maxAcceleration": 3.0,
@@ -70,19 +50,7 @@
     }
   ],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "slapdownTrigger",
-      "waypointRelativePos": 0.0,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "slapdownTrigger"
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -92,14 +60,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
+    "velocity": 0.0,
     "rotation": -90.0
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -0.0
   },
   "useDefaultConstraints": true
 }

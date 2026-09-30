@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.util.Color;
 
 public final class LEDConstants {
     /** The PWM port that the led bus is connected to the RIO on. */
-    public static final int Port = 9;
+    public static final int Port = 1;
     /** The length (in number of LED connections on the strip). */
     public static final int Length = 186;
     public static final int RightLength = 19;

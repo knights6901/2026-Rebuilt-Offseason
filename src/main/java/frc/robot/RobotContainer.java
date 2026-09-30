@@ -78,8 +78,7 @@ public class RobotContainer {
     }
 
     private void configureDefaultCommands() {
-        led.setDefaultCommand(led.runPattern(LEDConstants.ScrollRainbowPattern));
-        intake.setDefaultCommand(intake.stop());
+        led.setDefaultCommand(led.runPattern(LEDConstants.ScrollRainbowPattern).ignoringDisable(true));        intake.setDefaultCommand(intake.stop());
 
         drivetrain.setDefaultCommand(
                 drivetrain.applyRequest(() -> drive
