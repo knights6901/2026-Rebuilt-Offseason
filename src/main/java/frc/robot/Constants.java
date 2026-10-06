@@ -26,8 +26,8 @@ public final class Constants {
     }
 
     public static final class CANConstants {
-        /// The CAN network for all non-sweve subsystems.c
-        public static final CANBus kSubsystemNetwork = new CANBus("Swerve CANivore");
+        /// The CAN network for all non-sweve subsystems.
+        public static final CANBus kSubsystemNetwork = new CANBus("rio");
     }
 
     public static final class GameConstants {

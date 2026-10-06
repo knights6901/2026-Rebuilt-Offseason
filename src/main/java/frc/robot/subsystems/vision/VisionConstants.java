@@ -22,8 +22,8 @@ public final class VisionConstants {
      * orientation.
      */
     public static final Transform3d kRobotToCam = new Transform3d(
-            new Translation3d(Inches.of(-13), Inches.of(0.0), Inches.of(6.5)),
-            new Rotation3d(0, -Math.PI / 6, Math.PI));
+        new Translation3d(Inches.of(-13), Inches.of(-13.25), Inches.of(11)),
+        new Rotation3d(0, -Math.PI / 6, Math.PI));
 
     /** The layout of AprilTags on the field for localization. */
     public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout

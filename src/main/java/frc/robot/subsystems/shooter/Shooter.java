@@ -10,15 +10,12 @@ import static frc.robot.subsystems.shooter.ShooterConstants.*;
 
 import java.util.function.Supplier;
 
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -38,8 +35,12 @@ import frc.robot.Constants.GameConstants;
  * commands. Ballistics math lives in {@link ShooterPhysics}.
  */
 public class Shooter extends SubsystemBase {
-    private final TalonFX m_motorRight = new TalonFX(RightMotorId, CANConstants.kSubsystemNetwork);
-    private final TalonFX m_motorLeft = new TalonFX(LeftMotorId, CANConstants.kSubsystemNetwork);
+    private final TalonFX m_motorRightTop = new TalonFX(RightTopMotorId, CANConstants.kSubsystemNetwork);
+    private final TalonFX m_motorLeftTop = new TalonFX(LeftTopMotorId, CANConstants.kSubsystemNetwork);
+
+    private final TalonFX m_motorRightBottom = new TalonFX(RightBottomMotorId, CANConstants.kSubsystemNetwork);
+    private final TalonFX m_motorLeftBottom = new TalonFX(LeftBottomMotorId, CANConstants.kSubsystemNetwork);
+
     private final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
 
     /** The operating states of the shooter mechanism. */
@@ -77,15 +78,15 @@ public class Shooter extends SubsystemBase {
 
     /** Configures both motors and sets the left to follow the right, opposed. */
     public Shooter() {
-        TalonFXConfiguration motorConfig = new TalonFXConfiguration();
-        motorConfig.Slot0 = Gains;
-        motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-        motorConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        m_motorRightTop.getConfigurator().apply(MotorConfig);
+        m_motorLeftTop.getConfigurator().apply(MotorConfig);
 
-        m_motorRight.getConfigurator().apply(motorConfig);
-        m_motorLeft.getConfigurator().apply(motorConfig);
+        m_motorRightBottom.getConfigurator().apply(MotorConfig);
+        m_motorLeftBottom.getConfigurator().apply(MotorConfig);
 
-        m_motorLeft.setControl(new Follower(RightMotorId, MotorAlignmentValue.Opposed));
+        m_motorRightTop.setControl(new Follower(LeftTopMotorId, MotorAlignmentValue.Opposed));
+        m_motorRightBottom.setControl(new Follower(LeftTopMotorId, MotorAlignmentValue.Opposed));
+        m_motorLeftBottom.setControl(new Follower(LeftTopMotorId, MotorAlignmentValue.Aligned));
     }
 
     /**
@@ -99,12 +100,12 @@ public class Shooter extends SubsystemBase {
     /** Spins the flywheel at {@code rps}, e.g. for auto-aim shots. */
     public void shoot(AngularVelocity rps) {
         targetRPS = rps;
-        m_motorRight.setControl(m_request.withVelocity(rps));
+        m_motorLeftTop.setControl(m_request.withVelocity(rps));
     }
 
     /** Stops the flywheel by applying neutral output to both motors. */
     public void stop() {
-        m_motorRight.setControl(new NeutralOut());
+        m_motorLeftTop.setControl(new NeutralOut());
         shooterState = ShooterState.OFF;
         targetRPS = RotationsPerSecond.of(0);
     }
@@ -137,12 +138,20 @@ public class Shooter extends SubsystemBase {
 
     /** The flywheel's measured angular velocity. */
     public AngularVelocity getCurrentRPS() {
-        return m_motorLeft.getVelocity().getValue();
+        return m_motorLeftTop.getVelocity().getValue();
     }
 
     /** The flywheel's currently commanded angular velocity. */
     public AngularVelocity getTargetRPS() {
         return targetRPS;
+    }
+
+    public Command shootCommand(AngularVelocity rps) {
+        return run(() -> shoot(rps));
+    }
+
+    public Command neutralOut() {
+        return run(() -> stop());
     }
 
     @Override

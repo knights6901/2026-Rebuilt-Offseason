@@ -1,5 +1,6 @@
 package frc.robot.subsystems.kicker;
 
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -24,7 +25,8 @@ public class Kicker extends SubsystemBase {
 
     /** Returns a command that spins the kicker wheel at the configured velocity. */
     public Command kick() {
-        return run(() -> m_motor.setControl(new VelocityVoltage(KickerPower)));
+        // return run(() -> m_motor.setControl(new VelocityVoltage(KickerPower)));
+        return run(() -> m_motor.setControl(new DutyCycleOut(.25)));
     }
 
     /** Returns a command that spins the kicker wheel in reverse. */

@@ -60,5 +60,6 @@
   "java.dependency.enableDependencyCheckup": false,
   "files.watcherExclude": {
     "**/target/**": true
-  }
+  },
+  "java.compile.nullAnalysis.mode": "automatic"
 }
