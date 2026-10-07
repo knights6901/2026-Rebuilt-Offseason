@@ -14,7 +14,6 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
-import dev.doglog.DogLog;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -152,15 +151,9 @@ public class Vision extends SubsystemBase {
             estimatedPose = estimate;
             adjustDrivetrainPose(estimate.get());
         }
-        
-        // DogLog.log("Vision/SeeingAprilTag", estimatedPose.isPresent());
-        // DogLog.log("Vision/VisibleTagPoses", visibleTagPoses.toArray(new Pose3d[0]));
-        // DogLog.log("Vision/FusionEnabled", fusionEnabled);
-        
 
         estimatedPose.ifPresent(pose -> {
             visionField.setRobotPose(pose.estimatedPose.toPose2d());
-            // DogLog.log("Vision/EstimatedPose", pose.estimatedPose);
         });
     }
 
@@ -212,14 +205,7 @@ public class Vision extends SubsystemBase {
         int numTags = estimate.targetsUsed.size();
         double avgTagDistance = averageTagDistance(estimate);
 
-        // DogLog.log("Vision/NumTags", numTags);
-        // DogLog.log("Vision/AvgTagDistance", avgTagDistance);
-        // DogLog.log("Vision/Residual",
-                // pose2d.getTranslation().minus(drivetrain.getPose().getTranslation()).getNorm());
-
         String rejection = rejectionReason(estimate, avgTagDistance, numTags);
-        // DogLog.log("Vision/Accepted", rejection == null);
-        // DogLog.log("Vision/RejectionReason", rejection == null ? "" : rejection);
 
         if (rejection != null) {
             return;
@@ -245,8 +231,6 @@ public class Vision extends SubsystemBase {
         double xyStdDev = base
                 * (1 + Math.pow(avgTagDistance, 2) / VisionConstants.kDistanceDivisor)
                 / numTags;
-
-        // DogLog.log("Vision/XYStdDev", xyStdDev);
 
         /*
          * Heading is taken from the drivetrain rather than from vision, and paired with
@@ -289,10 +273,9 @@ public class Vision extends SubsystemBase {
         }
 
         double linearRate = Math.abs(
-            Math.sqrt(
-                Math.pow(drivetrain.getState().Speeds.vxMetersPerSecond, 2) +
-                Math.pow(drivetrain.getState().Speeds.vyMetersPerSecond, 2)
-            ));
+                Math.sqrt(
+                        Math.pow(drivetrain.getState().Speeds.vxMetersPerSecond, 2) +
+                                Math.pow(drivetrain.getState().Speeds.vyMetersPerSecond, 2)));
         if (linearRate > VisionConstants.kMaxLinearRateMPerSec) {
             return "Moving too fast";
         }
@@ -360,11 +343,11 @@ public class Vision extends SubsystemBase {
         }
     }
 
-    /** 
+    /**
      * Resets the heading for the visionPoseEstimator in case gyro is reset; it
      * prob won't be a significant difference ngl but it could stop 1-2 frames
      * from being cooked
-    */
+     */
     public void resetEstimatorHeading() {
         visionPoseEstimator.resetHeadingData(Timer.getTimestamp(), drivetrain.getPose().getRotation());
     }

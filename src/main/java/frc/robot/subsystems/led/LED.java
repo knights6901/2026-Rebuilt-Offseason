@@ -5,7 +5,6 @@ import static frc.robot.subsystems.led.LEDConstants.*;
 
 import java.util.function.Supplier;
 
-import dev.doglog.DogLog;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
@@ -24,10 +23,6 @@ public class LED extends SubsystemBase {
     private final AddressableLEDBufferView left;
     private final AddressableLEDBufferView middle;
     private final AddressableLEDBufferView right;
-
-    private String leftPatternName = "None";
-    private String middlePatternName = "None";
-    private String rightPatternName = "None";
 
     public LED(Drive drivetrain) {
         led = new AddressableLED(Port);
@@ -62,34 +57,22 @@ public class LED extends SubsystemBase {
 
     /** Returns a command that runs {@code pattern} on the entire strip. */
     public Command runPattern(LEDPattern pattern) {
-        return run(() -> {
-            pattern.applyTo(buffer);
-            leftPatternName = middlePatternName = rightPatternName = nameOf(pattern);
-        });
+        return run(() -> pattern.applyTo(buffer));
     }
 
     /** Returns a command that runs {@code pattern} on the left zone. */
     public Command runPatternLeft(LEDPattern pattern) {
-        return run(() -> {
-            pattern.applyTo(left);
-            leftPatternName = nameOf(pattern);
-        });
+        return run(() -> pattern.applyTo(left));
     }
 
     /** Returns a command that runs {@code pattern} on the middle zone. */
     public Command runPatternMiddle(LEDPattern pattern) {
-        return run(() -> {
-            pattern.applyTo(middle);
-            middlePatternName = nameOf(pattern);
-        });
+        return run(() -> pattern.applyTo(middle));
     }
 
     /** Returns a command that runs {@code pattern} on the right zone. */
     public Command runPatternRight(LEDPattern pattern) {
-        return run(() -> {
-            pattern.applyTo(right);
-            rightPatternName = nameOf(pattern);
-        });
+        return run(() -> pattern.applyTo(right));
     }
 
     public Command runAllPatterns(
@@ -104,10 +87,6 @@ public class LED extends SubsystemBase {
             leftPattern.applyTo(left);
             middlePattern.applyTo(middle);
             rightPattern.applyTo(right);
-
-            leftPatternName = nameOf(leftPattern);
-            middlePatternName = nameOf(middlePattern);
-            rightPatternName = nameOf(rightPattern);
         });
     }
 
@@ -118,9 +97,5 @@ public class LED extends SubsystemBase {
     @Override
     public void periodic() {
         led.setData(buffer);
-
-        // DogLog.log("LED/LeftPattern", leftPatternName);
-        // DogLog.log("LED/MiddlePattern", middlePatternName);
-        // DogLog.log("LED/RightPattern", rightPatternName);
     }
 }

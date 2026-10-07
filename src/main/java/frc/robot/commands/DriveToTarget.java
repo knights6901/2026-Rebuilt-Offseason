@@ -8,7 +8,6 @@ import java.util.function.Supplier;
 
 import com.ctre.phoenix6.swerve.SwerveRequest.FieldCentric;
 
-import dev.doglog.DogLog;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.units.measure.Angle;
@@ -79,10 +78,6 @@ public class DriveToTarget extends Command {
                 : input.RotationalRate;
 
         drivetrain.setControl(input.withVelocityX(vX).withVelocityY(vY).withRotationalRate(omega));
-
-        // DogLog.log("DriveToTarget/ErrorX", targetX != null ? xController.getError() : 0, Meters);
-        // DogLog.log("DriveToTarget/ErrorY", targetY != null ? yController.getError() : 0, Meters);
-        // DogLog.log("DriveToTarget/ErrorTheta", targetTheta != null ? thetaController.getError() : 0, Radians);
     }
 
     @Override

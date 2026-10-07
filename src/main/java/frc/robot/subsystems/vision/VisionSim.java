@@ -7,7 +7,6 @@ import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
 
-import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -98,10 +97,6 @@ public class VisionSim extends SubsystemBase {
         }
 
         Pose2d groundTruth = groundTruthOdometry.update(state.RawHeading, state.ModulePositions);
-
-        // DogLog.log("VisionSim/GroundTruthPose", groundTruth);
-        // DogLog.log("VisionSim/EstimateError",
-        //         drivetrain.getPose().getTranslation().minus(groundTruth.getTranslation()).getNorm());
 
         visionSim.update(groundTruth);
     }

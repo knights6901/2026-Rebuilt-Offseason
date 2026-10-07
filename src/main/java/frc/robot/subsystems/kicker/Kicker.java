@@ -1,11 +1,9 @@
 package frc.robot.subsystems.kicker;
 
-import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
-import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -25,8 +23,7 @@ public class Kicker extends SubsystemBase {
 
     /** Returns a command that spins the kicker wheel at the configured velocity. */
     public Command kick() {
-        // return run(() -> m_motor.setControl(new VelocityVoltage(KickerPower)));
-        return run(() -> m_motor.setControl(new DutyCycleOut(.25)));
+        return run(() -> m_motor.setControl(new VelocityVoltage(KickerPower)));
     }
 
     /** Returns a command that spins the kicker wheel in reverse. */
@@ -37,10 +34,5 @@ public class Kicker extends SubsystemBase {
     /** Stops the kicker motor by applying neutral output. */
     public Command stop() {
         return run(() -> m_motor.setControl(new NeutralOut()));
-    }
-
-    @Override
-    public void periodic() {
-        // DogLog.log("Kicker/CurrentRPS", m_motor.getVelocity().getValue());
     }
 }

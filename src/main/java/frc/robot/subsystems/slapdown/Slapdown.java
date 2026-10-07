@@ -12,12 +12,10 @@ import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
-import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
@@ -53,7 +51,6 @@ public class Slapdown extends SubsystemBase {
      */
     private static final double kDegreesPerMotorRotation = DeployedAngle.minus(HomeAngle).in(Degrees)
             / IntakePosition.minus(HomePosition).in(Rotations);
-
 
     private final TalonFX m_motor = new TalonFX(MotorId, CANConstants.kSubsystemNetwork);
     private final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
@@ -204,14 +201,6 @@ public class Slapdown extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // DogLog.log("Slapdown/State", getDeploymentState());
-        // DogLog.log("Slapdown/Position", getSlapdownPosition());
-
-        // DogLog.log("Slapdown/Angle", getArmAngle());
-
-        // DogLog.log("Slapdown/ComponentPoses", new Pose3d[] { getComponentPose() });
-        // DogLog.log("Slapdown/ZeroedPose", new Pose3d[] { new Pose3d() });
-
         slapdownPositionPublisher.set(getSlapdownPosition().in(Rotations));
     }
 }

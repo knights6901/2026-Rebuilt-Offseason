@@ -1,11 +1,9 @@
 package frc.robot.subsystems.intake;
 
-import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
-import dev.doglog.DogLog;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -27,8 +25,6 @@ public class Intake extends SubsystemBase {
         INTAKING,
         REVERSED
     }
-
-    private IntakeState intakeState = IntakeState.OFF;
 
     public Intake() {
         m_motor.getConfigurator().apply(MotorConfig);
@@ -74,19 +70,5 @@ public class Intake extends SubsystemBase {
     /** Whether the intake is actively intaking. */
     public boolean currentlyIntaking() {
         return intaking;
-    }
-
-    @Override
-    public void periodic() {
-        if (intaking && m_motor.getVelocity().getValueAsDouble() < -1) {
-            intakeState = IntakeState.REVERSED;
-        } else if (intaking) {
-            intakeState = IntakeState.INTAKING;
-        } else {
-            intakeState = IntakeState.OFF;
-        }
-
-        // DogLog.log("Intake/State", intakeState);
-        // DogLog.log("Intake/CurrentRPS", m_motor.getVelocity().getValue());
     }
 }

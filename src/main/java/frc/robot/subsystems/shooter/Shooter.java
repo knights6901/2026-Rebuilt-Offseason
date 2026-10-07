@@ -16,7 +16,6 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
-import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -151,15 +150,6 @@ public class Shooter extends SubsystemBase {
 
     public Command neutralOut() {
         return run(() -> stop());
-    }
-
-    @Override
-    public void periodic() {
-        // DogLog.log("Shooter/State", shooterState);
-        // DogLog.log("Shooter/Primed", primed.getAsBoolean());
-        // DogLog.log("Shooter/ActualRPS", getCurrentRPS());
-        // DogLog.log("Shooter/TargetRPS", targetRPS);
-        // DogLog.log("Shooter/ManualRPS", shootRPS);
     }
 
     /** Returns a command that primes the shooter to the default prime RPS. */

@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import dev.doglog.DogLog;
-import dev.doglog.DogLogOptions;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -92,10 +90,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotInit() {
-        // DogLog.setOptions(new DogLogOptions()
-        //         .withCaptureDs(true)
-        //         .withCaptureConsole(true));
-
         // No controller is plugged into the simulator, so every button binding
         // reports an unplugged-joystick warning every loop. Keep the warning on a
         // real robot, where an unplugged controller is worth knowing about.
