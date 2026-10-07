@@ -13,26 +13,26 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.AngularVelocity;
 
 public final class IntakeConstants {
-    /** The CAN ID of the intake motor. */
-    public final static int MotorId = 32;
+        /** The CAN ID of the intake motor. */
+        public final static int MotorId = 2;
 
-    /** The rotations per second for actively intaking balls. */
-    public final static AngularVelocity IntakeRPS = RotationsPerSecond.of(85);
+        /** The rotations per second for actively intaking balls. */
+        public final static AngularVelocity IntakeRPS = RotationsPerSecond.of(30);
 
-    /** PID and feedforward gains for the intake motor. */
-    public final static Slot0Configs Gains = new Slot0Configs()
-            .withKP(0.5).withKI(0).withKD(0)
-            .withKS(0).withKV(0.15);
+        /** PID and feedforward gains for the intake motor. */
+        public final static Slot0Configs Gains = new Slot0Configs()
+                        .withKP(0.5).withKI(0).withKD(0)
+                        .withKS(0).withKV(0.15);
 
-    /** The complete motor configuration for the intake system. */
-    public final static TalonFXConfiguration MotorConfig = new TalonFXConfiguration()
-            .withSlot0(IntakeConstants.Gains)
-            .withMotorOutput(new MotorOutputConfigs()
-                    .withNeutralMode(NeutralModeValue.Brake)
-                    .withInverted(InvertedValue.Clockwise_Positive))
-            .withCurrentLimits(new CurrentLimitsConfigs()
-                    .withStatorCurrentLimit(Amps.of(40))
-                    .withStatorCurrentLimitEnable(true)
-                    .withSupplyCurrentLimit(Amps.of(60))
-                    .withSupplyCurrentLimitEnable(true));
+        /** The complete motor configuration for the intake system. */
+        public final static TalonFXConfiguration MotorConfig = new TalonFXConfiguration()
+                        .withSlot0(IntakeConstants.Gains)
+                        .withMotorOutput(new MotorOutputConfigs()
+                                        .withNeutralMode(NeutralModeValue.Brake)
+                                        .withInverted(InvertedValue.Clockwise_Positive))
+                        .withCurrentLimits(new CurrentLimitsConfigs()
+                                        .withStatorCurrentLimit(Amps.of(40))
+                                        .withStatorCurrentLimitEnable(true)
+                                        .withSupplyCurrentLimit(Amps.of(60))
+                                        .withSupplyCurrentLimitEnable(true));
 }

@@ -1,6 +1,5 @@
 package frc.robot.subsystems.shooter;
 
-import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.kicker.Kicker;
 import frc.robot.commands.ShootCommand;
 
@@ -177,10 +176,9 @@ public class Shooter extends SubsystemBase {
      */
     public Command manuallyShoot(
             Supplier<AngularVelocity> rpsSupplier,
-            Kicker kicker,
-            Indexer indexer) {
+            Kicker kicker) {
         return new ShootCommand(
-                this, kicker, indexer,
+                this, kicker,
                 rpsSupplier,
                 ShooterState.PRIMING,
                 ShooterState.MANUAL);
@@ -194,7 +192,6 @@ public class Shooter extends SubsystemBase {
             Supplier<Pose2d> currentPoseSupplier,
             Translation3d target,
             Kicker kicker,
-            Indexer indexer,
             ShooterState primingState,
             ShooterState shootingState) {
         Supplier<AngularVelocity> rpsSupplier = () -> {
@@ -209,7 +206,7 @@ public class Shooter extends SubsystemBase {
         };
 
         return new ShootCommand(
-                this, kicker, indexer,
+                this, kicker,
                 rpsSupplier,
                 primingState, shootingState);
     }
@@ -220,8 +217,7 @@ public class Shooter extends SubsystemBase {
      */
     public Command autoAimShoot(
             Supplier<Pose2d> currentPoseSupplier,
-            Kicker kicker,
-            Indexer indexer) {
+            Kicker kicker) {
         Translation2d hubXY = GameConstants.getHubLocation();
         Translation3d hub = new Translation3d(
                 hubXY.getMeasureX(),
@@ -231,7 +227,7 @@ public class Shooter extends SubsystemBase {
         return shootAtTarget(
                 currentPoseSupplier,
                 hub,
-                kicker, indexer,
+                kicker,
                 ShooterState.AUTOHUB_PRIMING, ShooterState.AUTOHUB);
     }
 
@@ -241,12 +237,11 @@ public class Shooter extends SubsystemBase {
      */
     public Command passShoot(
             Supplier<Pose2d> currentPoseSupplier,
-            Kicker kicker,
-            Indexer indexer) {
+            Kicker kicker) {
         return shootAtTarget(
                 currentPoseSupplier,
                 new Translation3d(GameConstants.getPassLocation(currentPoseSupplier.get())),
-                kicker, indexer,
+                kicker,
                 ShooterState.AUTOPASS_PRIMING, ShooterState.AUTOPASS);
     }
 }

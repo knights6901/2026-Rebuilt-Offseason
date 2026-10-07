@@ -19,26 +19,22 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 import frc.robot.Constants.Operator;
-import frc.robot.commands.ShootCommand;
 import frc.robot.subsystems.drive.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.vision.Vision;
-import frc.robot.subsystems.indexer.Indexer;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.kicker.Kicker;
-import frc.robot.subsystems.kicker.KickerConstants;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.slapdown.Slapdown;
 import frc.robot.subsystems.led.LED;
 import frc.robot.subsystems.led.LEDConstants;
 
 public class RobotContainer {
-    private final Drive drivetrain;
-    private final Vision vision;
-    private final Indexer indexer;
+    // private final Drive drivetrain;
+    // private final Vision vision;
     private final Intake intake;
     private final Kicker kicker;
-    private final LED led;
+    // private final LED led;
     private final Shooter shooter;
     private final Slapdown slapdown;
 
@@ -50,12 +46,11 @@ public class RobotContainer {
     private final CommandXboxController driver = new CommandXboxController(Operator.kDriverControllerPort);
 
     public RobotContainer() {
-        drivetrain = TunerConstants.createDrivetrain();
-        vision = new Vision(drivetrain);
-        indexer = new Indexer();
+        // drivetrain = TunerConstants.createDrivetrain();
+        // vision = new Vision(drivetrain);
         intake = new Intake();
         kicker = new Kicker();
-        led = new LED(drivetrain);
+        // led = new LED(drivetrain);
         shooter = new Shooter();
         slapdown = new Slapdown();
 
@@ -68,9 +63,14 @@ public class RobotContainer {
         driver.b().onTrue(slapdown.retractSlapdown());
         driver.leftTrigger().whileTrue(intake.intake());
 
-        driver.rightBumper().whileTrue(shooter.shootCommand(RotationsPerSecond.of(75)));
-        driver.rightBumper().whileTrue(shooter.autoAimShoot(drivetrain::getPose, kicker, indexer));
+        driver.leftTrigger().whileTrue(intake.intake());
+        driver.rightTrigger().whileTrue(shooter.manuallyShoot(() -> RotationsPerSecond.of(75), kicker));
 
+        driver.x().onTrue(new RunCommand(() -> slapdown.resetSlapdownPosition(), slapdown));
+
+        // driver.rightBumper().whileTrue(shooter.shootCommand(RotationsPerSecond.of(75)));
+        // driver.rightBumper().whileTrue(shooter.autoAimShoot(drivetrain::getPose,
+        // kicker, indexer));
 
         /*
          * Panic switch: hold to shut vision out of the pose estimator entirely, in case
@@ -78,24 +78,24 @@ public class RobotContainer {
          * subsystem requirement, so it cannot cancel the drive default command.
          */
 
-        driver.back().whileTrue(
-        Commands.startEnd(
-        () -> vision.setFusionEnabled(false),
-        () -> vision.setFusionEnabled(true))
-        .ignoringDisable(true));
+        // driver.back().whileTrue(
+        // Commands.startEnd(
+        // () -> vision.setFusionEnabled(false),
+        // () -> vision.setFusionEnabled(true))
+        // .ignoringDisable(true));
     }
 
     private void configureDefaultCommands() {
-        led.setDefaultCommand(led.runPattern(LEDConstants.ScrollRainbowPattern));
+        // led.setDefaultCommand(led.runPattern(LEDConstants.ScrollRainbowPattern));
         intake.setDefaultCommand(intake.stop());
         shooter.setDefaultCommand(shooter.neutralOut());
         kicker.setDefaultCommand(kicker.stop());
 
-        drivetrain.setDefaultCommand(
-        drivetrain.applyRequest(() -> drive
-            .withVelocityX(driver.getLeftY() * kMaxSpeed)
-            .withVelocityY(driver.getLeftX() * kMaxSpeed)
-            .withRotationalRate(-driver.getRightX() * kMaxAngularRate)));
+        // drivetrain.setDefaultCommand(
+        // drivetrain.applyRequest(() -> drive
+        // .withVelocityX(driver.getLeftY() * kMaxSpeed)
+        // .withVelocityY(driver.getLeftX() * kMaxSpeed)
+        // .withRotationalRate(-driver.getRightX() * kMaxAngularRate)));
     }
 
     public Command getAutonomousCommand() {

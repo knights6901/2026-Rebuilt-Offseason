@@ -42,8 +42,7 @@ public class Intake extends SubsystemBase {
     /** Returns a command that runs the rollers inward at {@code rps}. */
     public Command intake(AngularVelocity rps) {
         return run(() -> {
-            // m_motor.setControl(new VelocityVoltage(rps));
-            m_motor.setControl(new DutyCycleOut(0.85));
+            m_motor.setControl(new VelocityVoltage(rps));
             intaking = true;
         });
     }
