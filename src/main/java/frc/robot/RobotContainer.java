@@ -66,7 +66,7 @@ public class RobotContainer {
         driver.leftTrigger().whileTrue(intake.intake());
         driver.rightTrigger().whileTrue(shooter.manuallyShoot(() -> RotationsPerSecond.of(75), kicker));
 
-        driver.x().onTrue(new RunCommand(() -> slapdown.resetSlapdownPosition(), slapdown));
+        driver.x().onTrue(new RunCommand(() -> slapdown.zeroSlapdownPosition(), slapdown));
 
         // driver.rightBumper().whileTrue(shooter.shootCommand(RotationsPerSecond.of(75)));
         // driver.rightBumper().whileTrue(shooter.autoAimShoot(drivetrain::getPose,
