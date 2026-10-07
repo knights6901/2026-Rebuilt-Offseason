@@ -14,7 +14,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 
 public final class IntakeConstants {
         /** The CAN ID of the intake motor. */
-        public final static int MotorId = 2;
+        public final static int MotorId = 31;
 
         /** The rotations per second for actively intaking balls. */
         public final static AngularVelocity IntakeRPS = RotationsPerSecond.of(30);

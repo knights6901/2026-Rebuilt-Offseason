@@ -13,7 +13,7 @@ import edu.wpi.first.units.measure.AngularVelocity;
 
 public final class KickerConstants {
         /** The CAN ID of the kicker motor. */
-        public final static int MotorId = 7;
+        public final static int MotorId = 24;
 
         /** The default speed of the kicker wheels. */
         public final static AngularVelocity KickerPower = RotationsPerSecond.of(85);

@@ -21,14 +21,14 @@ import edu.wpi.first.units.measure.LinearAcceleration;
 
 public final class ShooterConstants {
         /** The CAN ID of the left top shooter motor. */
-        public final static int LeftTopMotorId = 5;
+        public final static int LeftTopMotorId = 23;
         /** The CAN ID of the right top shooter motor. */
-        public final static int RightTopMotorId = 4;
+        public final static int RightTopMotorId = 21;
 
         /** The CAN ID of the left bottom shooter motor. */
-        public final static int LeftBottomMotorId = 6;
+        public final static int LeftBottomMotorId = 22;
         /** The CAN ID of the right bottom shooter motor. */
-        public final static int RightBottomMotorId = 3;
+        public final static int RightBottomMotorId = 20;
 
         /** The distance from the center of the robot to the shooter (horizontally). */
         public final static Distance CenterToShooter = Inches.of(8);

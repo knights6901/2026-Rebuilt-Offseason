@@ -22,7 +22,7 @@ import edu.wpi.first.units.measure.Mass;
 
 public final class SlapdownConstants {
         /** The CAN ID of the slapdown motor. */
-        public final static int MotorId = 1;
+        public final static int MotorId = 30;
 
         /** The position to lower the slapdown to when intaking a ball. */
         public final static Angle IntakePosition = Rotations.of(7.5);
