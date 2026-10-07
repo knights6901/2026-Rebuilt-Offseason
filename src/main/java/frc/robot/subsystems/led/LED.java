@@ -36,7 +36,7 @@ public class LED extends SubsystemBase {
 
         left = buffer.createView(0, 36);
         middle = buffer.createView(37, 166);
-        right = buffer.createView(167, 185);
+        right = buffer.createView(167, Length - 1);
 
         led.start();
     }

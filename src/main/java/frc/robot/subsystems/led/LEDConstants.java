@@ -13,7 +13,7 @@ public final class LEDConstants {
         /** The PWM port that the led bus is connected to the RIO on. */
         public static final int Port = 0;
         /** The length (in number of LED connections on the strip). */
-        public static final int Length = 186;
+        public static final int Length = 360;
         public static final int RightLength = 19;
         public static final int LeftLength = 36;
         public static final int MiddleLength = Length - RightLength - LeftLength;
