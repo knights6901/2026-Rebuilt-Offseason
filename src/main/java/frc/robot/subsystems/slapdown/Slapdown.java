@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import static frc.robot.subsystems.slapdown.SlapdownConstants.*;
 import frc.robot.Constants.CANConstants;
+import frc.robot.subsystems.intake.Intake;
 
 /**
  * Controls the slapdown mechanism, a hinged arm that deploys to a fixed
@@ -83,7 +84,7 @@ public class Slapdown extends SubsystemBase {
     /** Configures the motor, resets its position to home, and holds it there. */
     public Slapdown() {
         m_motor.getConfigurator().apply(MotorConfig);
-        resetSlapdownPosition();
+        zeroSlapdownPosition();
 
         // Latch a hold on the home position so the arm is held up the moment the
         // robot is enabled, rather than sagging under gravity until something
@@ -117,8 +118,17 @@ public class Slapdown extends SubsystemBase {
     }
 
     /** Resets the motor's position encoder to zero (home position). */
-    public void resetSlapdownPosition() {
+    public void zeroSlapdownPosition() {
         m_motor.setPosition(0);
+    }
+    
+    /** Snaps the motor's position encoder to closest position (up or down). */
+    public void snapSlapdownPosition() {
+        if (getDeploymentState() == SlapdownState.DOWN) {
+            m_motor.setPosition(IntakePosition);
+        } else if (getDeploymentState() == SlapdownState.UP) {
+            m_motor.setPosition(HomePosition);
+        }
     }
 
     /**
