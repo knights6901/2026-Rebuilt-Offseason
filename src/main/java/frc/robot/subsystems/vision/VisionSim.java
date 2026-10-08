@@ -47,11 +47,11 @@ public class VisionSim extends SubsystemBase {
         visionSim.addAprilTags(kTagLayout);
 
         SimCameraProperties cameraProp = new SimCameraProperties();
-        cameraProp.setCalibration(kSimCameraWidthPx, kSimCameraHeightPx, kSimCameraFov);
-        cameraProp.setCalibError(kSimCalibErrorAvgPx, kSimCalibErrorStdDevPx);
-        cameraProp.setFPS(kSimFps);
-        cameraProp.setAvgLatencyMs(kSimAvgLatencyMs);
-        cameraProp.setLatencyStdDevMs(kSimLatencyStdDevMs);
+        cameraProp.setCalibration(Sim.kCameraWidthPx, Sim.kCameraHeightPx, Sim.kCameraFov);
+        cameraProp.setCalibError(Sim.kCalibErrorAvgPx, Sim.kCalibErrorStdDevPx);
+        cameraProp.setFPS(Sim.kFps);
+        cameraProp.setAvgLatencyMs(Sim.kAvgLatencyMs);
+        cameraProp.setLatencyStdDevMs(Sim.kLatencyStdDevMs);
 
         PhotonCameraSim cameraSim = new PhotonCameraSim(photonCam, cameraProp);
         cameraSim.enableRawStream(true);
