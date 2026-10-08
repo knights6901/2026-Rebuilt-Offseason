@@ -49,11 +49,11 @@
     {
       "anchor": {
         "x": 6.215590361445784,
-        "y": 5.141255349500714
+        "y": 2.3958433734939764
       },
       "prevControl": {
         "x": 6.215590361445784,
-        "y": 6.081292580489591
+        "y": 3.3358806044828526
       },
       "nextControl": null,
       "isLocked": false,
@@ -72,15 +72,19 @@
     {
       "waypointRelativePos": 1.9,
       "rotationDegrees": -90.0
+    },
+    {
+      "waypointRelativePos": 2.880497925311203,
+      "rotationDegrees": -90.0
     }
   ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 2.581637717121588,
-      "maxWaypointRelativePos": 3.0,
+      "minWaypointRelativePos": 2.4684863523573246,
+      "maxWaypointRelativePos": 2.8317617866004974,
       "constraints": {
-        "maxVelocity": 0.4,
+        "maxVelocity": 0.6,
         "maxAcceleration": 3.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
@@ -112,11 +116,11 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": -90.0
+    "velocity": 0.0,
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Modular Paths",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 126.42

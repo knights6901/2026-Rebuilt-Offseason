@@ -100,7 +100,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "leftHS_QualLeave"
+            "pathName": "leftHS_ShorterLeave"
           }
         }
       ]

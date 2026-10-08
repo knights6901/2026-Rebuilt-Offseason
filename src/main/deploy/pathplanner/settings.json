@@ -2,7 +2,11 @@
   "robotWidth": 0.82,
   "robotLength": 0.86,
   "holonomicMode": true,
-  "pathFolders": [],
+  "pathFolders": [
+    "Modular Paths",
+    "Debug Paths",
+    "Sketchy Paths"
+  ],
   "autoFolders": [
     "Left",
     "Middle",
