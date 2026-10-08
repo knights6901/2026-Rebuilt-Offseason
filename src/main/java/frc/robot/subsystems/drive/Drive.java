@@ -10,6 +10,10 @@ import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -49,6 +53,7 @@ public class Drive extends TunerSwerveDrivetrain implements Subsystem {
 
     /* Swerve requests to apply during SysId characterization */
     private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
+    private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
 
     /*
      * SysId routine for characterizing translation. This is used to find PID gains
@@ -89,6 +94,8 @@ public class Drive extends TunerSwerveDrivetrain implements Subsystem {
             startSimThread();
         }
         registerTelemetry(logger::telemeterize);
+
+        configureAutoBuilder();
     }
 
     /**
@@ -287,5 +294,32 @@ public class Drive extends TunerSwerveDrivetrain implements Subsystem {
     // returns the current pose for other subsystems (like vision) to access
     public Pose2d getPose() {
         return this.getState().Pose;
+    }
+
+    private void configureAutoBuilder() {
+        try {
+            RobotConfig config = RobotConfig.fromGUISettings();
+            // Configure AutoBuilder last
+            AutoBuilder.configure(
+                    () -> getState().Pose, // Robot pose supplier
+                    this::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
+                    () -> getState().Speeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+                    (speeds, feedforwards) -> setControl(
+                            m_pathApplyRobotSpeeds.withSpeeds(speeds)
+                                    .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
+                                    .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesY())),
+                    new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller
+                                                    // for holonomic drive trains
+                            new PIDConstants(2.0, 0.0, 0.0), // Translation PID constants
+                            new PIDConstants(4.0, 0.0, 0.0) // Rotation PID constants
+                    ),
+                    config, // The robot configuration
+                    () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
+                    this // Reference to this subsystem to set requirements
+            );
+        } catch (Exception e) {
+            // Handle exception as needed
+            DriverStation.reportError("Failed to load path planner", e.getStackTrace());
+        }
     }
 }

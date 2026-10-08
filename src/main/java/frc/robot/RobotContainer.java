@@ -5,6 +5,7 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 import static frc.robot.subsystems.drive.DriveConstants.kMaxAngularRate;
 import static frc.robot.subsystems.drive.DriveConstants.kMaxSpeed;
 import static frc.robot.subsystems.drive.DriveConstants.kRotationDeadband;
@@ -12,14 +13,21 @@ import static frc.robot.subsystems.drive.DriveConstants.kTranslationDeadband;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 import frc.robot.Constants.Operator;
 import frc.robot.commands.AlignToHub;
+import frc.robot.commands.StopSubsystems;
 import frc.robot.subsystems.drive.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.vision.Vision;
@@ -35,7 +43,7 @@ public class RobotContainer {
     private final Vision vision;
     private final Intake intake;
     private final Kicker kicker;
-    // private final LED led;
+    private final LED led;
     private final Shooter shooter;
     private final Slapdown slapdown;
 
@@ -45,18 +53,24 @@ public class RobotContainer {
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     private final CommandXboxController driver = new CommandXboxController(Operator.kDriverControllerPort);
+    private final SendableChooser<Command> sam_autoChooser;
 
     public RobotContainer() {
         drivetrain = TunerConstants.createDrivetrain();
         vision = new Vision(drivetrain);
         intake = new Intake();
         kicker = new Kicker();
-        // led = new LED(drivetrain);
+        led = new LED(drivetrain);
         shooter = new Shooter();
         slapdown = new Slapdown();
 
+        sam_autoChooser = AutoBuilder.buildAutoChooser("zero");
+        SmartDashboard.putData("Auto Chooser", sam_autoChooser);
+
         configureBindings();
         configureDefaultCommands();
+        configurePathPlannerCommands();
+        configureMirroredAutons();
     }
 
     private void configureBindings() {
@@ -72,7 +86,7 @@ public class RobotContainer {
         driver.rightBumper().whileTrue(new AlignToHub(drivetrain, vision));
 
         // driver.rightBumper().whileTrue(shooter.shootCommand(RotationsPerSecond.of(75)));
-        // driver.rightBumper().whileTrue(shooter.autoAimShoot(drivetrain::getPose,
+        // driver.rightTrigger().whileTrue(shooter.autoAimShoot(drivetrain::getPose,
         // kicker, indexer));
 
         /*
@@ -89,7 +103,7 @@ public class RobotContainer {
     }
 
     private void configureDefaultCommands() {
-        // led.setDefaultCommand(led.runPattern(LEDConstants.ScrollRainbowPattern));
+        led.setDefaultCommand(led.runPattern(LEDConstants.ScrollRainbowPattern));
         intake.setDefaultCommand(intake.stop());
         shooter.setDefaultCommand(shooter.neutralOut());
         kicker.setDefaultCommand(kicker.stop());
@@ -101,7 +115,68 @@ public class RobotContainer {
                         .withRotationalRate(-driver.getRightX() * kMaxAngularRate)));
     }
 
+    private void configurePathPlannerCommands() {
+        NamedCommands.registerCommand("stopSubsystems",
+                        new StopSubsystems(shooter, kicker, intake));
+
+        NamedCommands.registerCommand("autoAimShoot",
+                        shooter.autoAimShoot(drivetrain::getPose, kicker));
+
+        NamedCommands.registerCommand("autoPassShoot",
+                        shooter.passShoot(drivetrain::getPose, kicker));
+
+        NamedCommands.registerCommand("fiftyRPSShoot",
+                        shooter.manuallyShoot(() -> RotationsPerSecond.of(50), kicker));
+
+        NamedCommands.registerCommand("primeShooter", shooter.prime().withTimeout(Seconds.of(3)));
+        NamedCommands.registerCommand("stopShooter",
+                        new InstantCommand(() -> {
+                                shooter.stop();
+                                kicker.stop();
+                        }, shooter, kicker));
+
+        NamedCommands.registerCommand("intake", intake.stop());
+        NamedCommands.registerCommand("stopIntake", new InstantCommand(() -> intake.stop(), intake));
+        NamedCommands.registerCommand("toggleIntake", intake.intake());
+
+        NamedCommands.registerCommand("rotateToHub",
+                        new AlignToHub(drivetrain, vision));
+
+        NamedCommands.registerCommand("slapdownTrigger", slapdown.slapdown());
+        NamedCommands.registerCommand("slapdownRetract", slapdown.retractSlapdown());
+    }
+
+    private void configureMirroredAutons() {
+        // mirrored left autos for right side
+        sam_autoChooser.addOption("sam_rightHS", new PathPlannerAuto("sam_leftHS", true));
+        sam_autoChooser.addOption("sam_rightHS_delay", new PathPlannerAuto("sam_leftHS_delay", true));
+
+        sam_autoChooser.addOption("sam_rightChaos", new PathPlannerAuto("sam_leftChaos", true));
+        sam_autoChooser.addOption("sam_rightChaos_delay", new PathPlannerAuto("sam_leftChaos_delay", true));
+
+        sam_autoChooser.addOption("sam_rightPass", new PathPlannerAuto("sam_leftPass", true));
+        sam_autoChooser.addOption("sam_rightPass_delay", new PathPlannerAuto("sam_leftPass_delay", true));
+
+        sam_autoChooser.addOption("sam_rightDoubleHS", new PathPlannerAuto("sam_leftDoubleHS", true));
+
+        sam_autoChooser.addOption("sam_rightHS_disrupt", new PathPlannerAuto("sam_leftHS_disrupt", true));
+        sam_autoChooser.addOption("sam_rightHS_disruptBump",
+                        new PathPlannerAuto("sam_leftHS_disruptBump", true));
+        sam_autoChooser.addOption("sam_rightHS_returnBump",
+                        new PathPlannerAuto("sam_leftHS_returnBump", true));
+
+        sam_autoChooser.addOption("sam_right_ap_sketchy_auton",
+                        new PathPlannerAuto("sam_left_ap_sketchy_auton", true));
+
+        sam_autoChooser.addOption("sam_rightQualHS", new PathPlannerAuto("sam_leftQualHS"));
+    }
+
+    /**
+     * Returns the autonomous command selected from the SmartDashboard chooser.
+        *
+        * @return the selected autonomous {@link Command}
+    */
     public Command getAutonomousCommand() {
-        return Commands.print("No autonomous command configured");
+        return sam_autoChooser.getSelected();
     }
 }
