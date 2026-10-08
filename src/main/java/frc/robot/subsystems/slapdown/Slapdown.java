@@ -25,7 +25,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import static frc.robot.subsystems.slapdown.SlapdownConstants.*;
 import frc.robot.Constants.CANConstants;
-import frc.robot.subsystems.intake.Intake;
 
 /**
  * Controls the slapdown mechanism, a hinged arm that deploys to a fixed
