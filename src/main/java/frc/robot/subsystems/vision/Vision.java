@@ -147,11 +147,6 @@ public class Vision extends SubsystemBase {
 
     @Override
     public void periodic() {
-        /*
-         * The trig-solve strategy interpolates this buffer at each result's timestamp,
-         * so it has to be fed every loop, whether or not a frame arrived. Photon
-         * timestamps are FPGA-based, matching Timer.getTimestamp().
-         */
         visionPoseEstimator.addHeadingData(Timer.getTimestamp(), drivetrain.getPose().getRotation());
 
         visibleTagPoses.clear();
@@ -186,7 +181,8 @@ public class Vision extends SubsystemBase {
 
     /** Whether a pipeline result has targets and is fresh enough to trust. */
     private boolean isUsable(PhotonPipelineResult result) {
-        boolean isStale = Timer.getTimestamp() - result.getTimestampSeconds() > VisionConstants.Filter.kMaxResultAgeSeconds;
+        boolean isStale = Timer.getTimestamp()
+                - result.getTimestampSeconds() > VisionConstants.Filter.kMaxResultAgeSeconds;
         return result.hasTargets() && !isStale;
     }
 

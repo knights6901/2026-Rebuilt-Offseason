@@ -19,6 +19,8 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.networktables.DoublePublisher;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -66,6 +68,15 @@ public class Shooter extends SubsystemBase {
 
     /** The flywheel RPS currently being targeted; zero when idle. */
     public AngularVelocity targetRPS = RotationsPerSecond.of(0);
+
+    private final DoublePublisher shooterSpeedPublisher = NetworkTableInstance.getDefault()
+            .getTable("Shooter")
+            .getDoubleTopic("Actual RPS")
+            .publish();
+    private final DoublePublisher targetSpeedPublisher = NetworkTableInstance.getDefault()
+            .getTable("Shooter")
+            .getDoubleTopic("Target RPS")
+            .publish();
 
     /**
      * True once the flywheel is within {@link ShooterConstants#PrimingTolerance} of
@@ -233,5 +244,11 @@ public class Shooter extends SubsystemBase {
                 new Translation3d(GameConstants.getPassLocation(currentPoseSupplier.get())),
                 kicker,
                 ShooterState.AUTOPASS_PRIMING, ShooterState.AUTOPASS);
+    }
+
+    @Override
+    public void periodic() {
+        shooterSpeedPublisher.set(m_motorLeftTop.getVelocity().getValueAsDouble());
+        targetSpeedPublisher.set(targetRPS.magnitude());
     }
 }

@@ -77,8 +77,8 @@ public final class ShooterConstants {
 
         /** The PID and feedforward settings for the shooter motors. */
         public final static Slot0Configs Gains = new Slot0Configs()
-                        .withKP(0.4).withKI(0).withKD(0.01)
-                        .withKS(0).withKV(0.115);
+                        .withKP(0.95).withKI(0).withKD(0.01)
+                        .withKS(0.25).withKV(0.122);
 
         /** The complete motor configuration for the shooter system. */
         public static final TalonFXConfiguration MotorConfig = new TalonFXConfiguration()
