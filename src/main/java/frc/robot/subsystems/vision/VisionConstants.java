@@ -54,6 +54,9 @@ public final class VisionConstants {
     /** Discard a pipeline result older than this many seconds. */
     public static final double kMaxResultAgeSeconds = 0.2;
 
+    /** Discard a single-tag solve whose pose ambiguity exceeds this. */
+    public static final double kMaxPoseAmbiguity = 0.2;
+
     /** Discard an estimate whose average camera-to-tag distance exceeds this. */
     public static final double kMaxTagDistanceMeters = 5.0;
 

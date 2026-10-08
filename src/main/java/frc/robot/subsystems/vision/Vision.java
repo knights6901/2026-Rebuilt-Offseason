@@ -1,11 +1,13 @@
 package frc.robot.subsystems.vision;
 
+import frc.robot.Constants.GameConstants;
 import frc.robot.Robot;
 import frc.robot.subsystems.drive.Drive;
 
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.Set;
 
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
@@ -18,7 +20,10 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -61,6 +66,13 @@ public class Vision extends SubsystemBase {
      * cycle).
      */
     private Optional<EstimatedRobotPose> estimatedPose = Optional.empty();
+
+    /**
+     * Robot-relative bearing to the center of our hub, from the last frame that
+     * saw any of its tags, and when that frame was captured.
+     */
+    private Rotation2d hubBearing = Rotation2d.kZero;
+    private double hubBearingTimestamp = Double.NEGATIVE_INFINITY;
 
     /**
      * Whether vision measurements are currently allowed to reach the drivetrain.
@@ -112,6 +124,20 @@ public class Vision extends SubsystemBase {
     }
 
     /**
+     * Returns the robot-relative bearing to the center of our alliance's hub, as
+     * measured directly off its AprilTags, or empty if the camera hasn't seen them
+     * recently. CCW-positive, with zero straight out the front of the robot.
+     *
+     * <p>
+     * This comes purely from the camera's view of the tags and never touches the
+     * drivetrain pose, so it stays correct even when the pose estimate has drifted.
+     */
+    public Optional<Rotation2d> getHubBearing() {
+        boolean isStale = Timer.getTimestamp() - hubBearingTimestamp > VisionConstants.kMaxResultAgeSeconds;
+        return isStale ? Optional.empty() : Optional.of(hubBearing);
+    }
+
+    /**
      * Enables or disables fusion of vision measurements into the drivetrain pose.
      * Tag tracking and logging continue either way.
      */
@@ -142,6 +168,7 @@ public class Vision extends SubsystemBase {
             }
 
             recordVisibleTags(result);
+            recordHubBearing(result);
 
             Optional<EstimatedRobotPose> estimate = estimatePose(result);
             if (estimate.isEmpty()) {
@@ -172,6 +199,51 @@ public class Vision extends SubsystemBase {
             VisionConstants.kTagLayout.getTagPose(target.getFiducialId()).ifPresent(visibleTagPoses::add);
             visibleTagIds.add(target.getFiducialId());
         }
+    }
+
+    /**
+     * Updates the hub bearing from the hub tags in this result, if there are any.
+     *
+     * <p>
+     * Each tag sits off to one side of the hub, and the camera sits off to one
+     * side of the robot, so a tag's raw yaw isn't the angle we want. Instead each
+     * tag's camera-relative transform is chained with where the camera is on the
+     * robot and where the hub center is relative to that tag, which places the hub
+     * center in the robot's own frame. The estimates from every tag are averaged.
+     */
+    private void recordHubBearing(PhotonPipelineResult result) {
+        Translation2d hubLocation = GameConstants.getHubLocation();
+        Pose3d hub = new Pose3d(hubLocation.getX(), hubLocation.getY(), 0, Rotation3d.kZero);
+        Set<Integer> hubTagIds = GameConstants.getHubTagIds();
+
+        Translation2d robotToHub = Translation2d.kZero;
+        boolean sawHub = false;
+
+        for (PhotonTrackedTarget target : result.getTargets()) {
+            Optional<Pose3d> tagPose = VisionConstants.kTagLayout.getTagPose(target.getFiducialId());
+
+            if (!hubTagIds.contains(target.getFiducialId())
+                    || tagPose.isEmpty()
+                    || target.getPoseAmbiguity() > VisionConstants.kMaxPoseAmbiguity) {
+                continue;
+            }
+
+            Pose3d tagInRobotFrame = Pose3d.kZero
+                    .transformBy(VisionConstants.kRobotToCam)
+                    .transformBy(target.getBestCameraToTarget());
+            Pose3d hubInRobotFrame = tagInRobotFrame.transformBy(new Transform3d(tagPose.get(), hub));
+
+            robotToHub = robotToHub.plus(hubInRobotFrame.getTranslation().toTranslation2d());
+            sawHub = true;
+        }
+
+        if (!sawHub) {
+            return;
+        }
+
+        /* The sum points the same way as the average, so there's no need to divide. */
+        hubBearing = robotToHub.getAngle();
+        hubBearingTimestamp = result.getTimestampSeconds();
     }
 
     /**
@@ -258,7 +330,7 @@ public class Vision extends SubsystemBase {
         }
 
         if (numTags == 1) {
-            if (estimate.targetsUsed.get(0).poseAmbiguity > 0.2) {
+            if (estimate.targetsUsed.get(0).poseAmbiguity > VisionConstants.kMaxPoseAmbiguity) {
                 return "Ambiguity too high";
             }
         }

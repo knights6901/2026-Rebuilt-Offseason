@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 import frc.robot.Constants.Operator;
+import frc.robot.commands.AlignToHub;
 import frc.robot.subsystems.drive.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.vision.Vision;
@@ -30,8 +31,8 @@ import frc.robot.subsystems.led.LED;
 import frc.robot.subsystems.led.LEDConstants;
 
 public class RobotContainer {
-    // private final Drive drivetrain;
-    // private final Vision vision;
+    private final Drive drivetrain;
+    private final Vision vision;
     private final Intake intake;
     private final Kicker kicker;
     // private final LED led;
@@ -46,8 +47,8 @@ public class RobotContainer {
     private final CommandXboxController driver = new CommandXboxController(Operator.kDriverControllerPort);
 
     public RobotContainer() {
-        // drivetrain = TunerConstants.createDrivetrain();
-        // vision = new Vision(drivetrain);
+        drivetrain = TunerConstants.createDrivetrain();
+        vision = new Vision(drivetrain);
         intake = new Intake();
         kicker = new Kicker();
         // led = new LED(drivetrain);
@@ -68,6 +69,8 @@ public class RobotContainer {
 
         driver.x().onTrue(new RunCommand(() -> slapdown.zeroSlapdownPosition(), slapdown));
 
+        driver.rightBumper().whileTrue(new AlignToHub(drivetrain, vision));
+
         // driver.rightBumper().whileTrue(shooter.shootCommand(RotationsPerSecond.of(75)));
         // driver.rightBumper().whileTrue(shooter.autoAimShoot(drivetrain::getPose,
         // kicker, indexer));
@@ -78,11 +81,11 @@ public class RobotContainer {
          * subsystem requirement, so it cannot cancel the drive default command.
          */
 
-        // driver.back().whileTrue(
-        // Commands.startEnd(
-        // () -> vision.setFusionEnabled(false),
-        // () -> vision.setFusionEnabled(true))
-        // .ignoringDisable(true));
+        driver.back().whileTrue(
+                Commands.startEnd(
+                        () -> vision.setFusionEnabled(false),
+                        () -> vision.setFusionEnabled(true))
+                        .ignoringDisable(true));
     }
 
     private void configureDefaultCommands() {
@@ -91,11 +94,11 @@ public class RobotContainer {
         shooter.setDefaultCommand(shooter.neutralOut());
         kicker.setDefaultCommand(kicker.stop());
 
-        // drivetrain.setDefaultCommand(
-        // drivetrain.applyRequest(() -> drive
-        // .withVelocityX(driver.getLeftY() * kMaxSpeed)
-        // .withVelocityY(driver.getLeftX() * kMaxSpeed)
-        // .withRotationalRate(-driver.getRightX() * kMaxAngularRate)));
+        drivetrain.setDefaultCommand(
+                drivetrain.applyRequest(() -> drive
+                        .withVelocityX(driver.getLeftY() * kMaxSpeed)
+                        .withVelocityY(driver.getLeftX() * kMaxSpeed)
+                        .withRotationalRate(-driver.getRightX() * kMaxAngularRate)));
     }
 
     public Command getAutonomousCommand() {

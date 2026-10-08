@@ -4,6 +4,8 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 
+import java.util.Set;
+
 import com.ctre.phoenix6.CANBus;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -36,6 +38,11 @@ public final class Constants {
         /** The position of the hub/target on the red alliance side of the field. */
         public static final Translation2d RedHubLocation = new Translation2d(11.901, 4.021);
 
+        /** The IDs of the AprilTags mounted on the blue alliance hub. */
+        public static final Set<Integer> BlueHubTagIds = Set.of(18, 19, 20, 21, 24, 25, 26, 27);
+        /** The IDs of the AprilTags mounted on the red alliance hub. */
+        public static final Set<Integer> RedHubTagIds = Set.of(2, 3, 4, 5, 8, 9, 10, 11);
+
         /** The y-position of the left trench on the blue alliance side of the field. */
         public static final Distance BlueLeftTrenchY = Meters.of(7.435);
         /**
@@ -65,6 +72,12 @@ public final class Constants {
         public static Translation2d getHubLocation() {
             return (DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Blue) ? BlueHubLocation
                     : RedHubLocation;
+        }
+
+        /** Returns the IDs of the AprilTags on the hub of the current alliance. */
+        public static Set<Integer> getHubTagIds() {
+            return (DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Blue) ? BlueHubTagIds
+                    : RedHubTagIds;
         }
 
         /**
