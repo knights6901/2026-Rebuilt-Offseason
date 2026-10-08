@@ -27,7 +27,7 @@ public class AlignToHub extends Command {
      * The side of the robot to point at the hub. This is the back, which is where
      * the camera looks, so the hub tags are in view once we're aligned.
      */
-    private static final Rotation2d kAimDirection = Rotation2d.k180deg;
+    private static final Rotation2d kAimDirection = Rotation2d.kZero;
 
     private final Drive drivetrain;
     private final Vision vision;

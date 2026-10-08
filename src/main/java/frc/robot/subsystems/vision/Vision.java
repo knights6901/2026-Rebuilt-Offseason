@@ -133,7 +133,7 @@ public class Vision extends SubsystemBase {
      * drivetrain pose, so it stays correct even when the pose estimate has drifted.
      */
     public Optional<Rotation2d> getHubBearing() {
-        boolean isStale = Timer.getTimestamp() - hubBearingTimestamp > VisionConstants.kMaxResultAgeSeconds;
+        boolean isStale = Timer.getTimestamp() - hubBearingTimestamp > VisionConstants.Filter.kMaxResultAgeSeconds;
         return isStale ? Optional.empty() : Optional.of(hubBearing);
     }
 
@@ -186,7 +186,7 @@ public class Vision extends SubsystemBase {
 
     /** Whether a pipeline result has targets and is fresh enough to trust. */
     private boolean isUsable(PhotonPipelineResult result) {
-        boolean isStale = Timer.getTimestamp() - result.getTimestampSeconds() > VisionConstants.kMaxResultAgeSeconds;
+        boolean isStale = Timer.getTimestamp() - result.getTimestampSeconds() > VisionConstants.Filter.kMaxResultAgeSeconds;
         return result.hasTargets() && !isStale;
     }
 
@@ -224,7 +224,7 @@ public class Vision extends SubsystemBase {
 
             if (!hubTagIds.contains(target.getFiducialId())
                     || tagPose.isEmpty()
-                    || target.getPoseAmbiguity() > VisionConstants.kMaxPoseAmbiguity) {
+                    || target.getPoseAmbiguity() > VisionConstants.Filter.kMaxPoseAmbiguity) {
                 continue;
             }
 
@@ -298,10 +298,10 @@ public class Vision extends SubsystemBase {
          * of tags in the solution.
          */
         double base = numTags > 1
-                ? VisionConstants.kMultiTagXYStdDevBase
-                : VisionConstants.kSingleTagXYStdDevBase;
+                ? VisionConstants.StdDevs.kMultiTagXYBase
+                : VisionConstants.StdDevs.kSingleTagXYBase;
         double xyStdDev = base
-                * (1 + Math.pow(avgTagDistance, 2) / VisionConstants.kDistanceDivisor)
+                * (1 + Math.pow(avgTagDistance, 2) / VisionConstants.StdDevs.kDistanceDivisor)
                 / numTags;
 
         /*
@@ -311,7 +311,7 @@ public class Vision extends SubsystemBase {
          * what keeps field-oriented driving identical to gyro-only behaviour.
          */
         Pose2d measurement = new Pose2d(pose2d.getTranslation(), drivetrain.getPose().getRotation());
-        Matrix<N3, N1> stdDevs = VecBuilder.fill(xyStdDev, xyStdDev, VisionConstants.kThetaStdDev);
+        Matrix<N3, N1> stdDevs = VecBuilder.fill(xyStdDev, xyStdDev, VisionConstants.StdDevs.kTheta);
 
         drivetrain.addVisionMeasurement(measurement, estimate.timestampSeconds, stdDevs);
     }
@@ -330,17 +330,17 @@ public class Vision extends SubsystemBase {
         }
 
         if (numTags == 1) {
-            if (estimate.targetsUsed.get(0).poseAmbiguity > VisionConstants.kMaxPoseAmbiguity) {
+            if (estimate.targetsUsed.get(0).poseAmbiguity > VisionConstants.Filter.kMaxPoseAmbiguity) {
                 return "Ambiguity too high";
             }
         }
 
-        if (avgTagDistance > VisionConstants.kMaxTagDistanceMeters) {
+        if (avgTagDistance > VisionConstants.Filter.kMaxTagDistanceMeters) {
             return "Tags too far";
         }
 
         double angularRate = Math.abs(drivetrain.getState().Speeds.omegaRadiansPerSecond);
-        if (angularRate > VisionConstants.kMaxAngularRateRadPerSec) {
+        if (angularRate > VisionConstants.Filter.kMaxAngularRateRadPerSec) {
             return "Spinning too fast";
         }
 
@@ -348,7 +348,7 @@ public class Vision extends SubsystemBase {
                 Math.sqrt(
                         Math.pow(drivetrain.getState().Speeds.vxMetersPerSecond, 2) +
                                 Math.pow(drivetrain.getState().Speeds.vyMetersPerSecond, 2)));
-        if (linearRate > VisionConstants.kMaxLinearRateMPerSec) {
+        if (linearRate > VisionConstants.Filter.kMaxLinearRateMPerSec) {
             return "Moving too fast";
         }
 
@@ -362,13 +362,13 @@ public class Vision extends SubsystemBase {
          * 3D pose.
          */
         if (estimate.strategy != PoseStrategy.PNP_DISTANCE_TRIG_SOLVE) {
-            if (Math.abs(estimate.estimatedPose.getZ()) > VisionConstants.kMaxZErrorMeters) {
+            if (Math.abs(estimate.estimatedPose.getZ()) > VisionConstants.Filter.kMaxZErrorMeters) {
                 return "Bad Z height";
             }
 
             Rotation3d rotation = estimate.estimatedPose.getRotation();
-            if (Math.abs(rotation.getX()) > VisionConstants.kMaxTiltRadians
-                    || Math.abs(rotation.getY()) > VisionConstants.kMaxTiltRadians) {
+            if (Math.abs(rotation.getX()) > VisionConstants.Filter.kMaxTiltRadians
+                    || Math.abs(rotation.getY()) > VisionConstants.Filter.kMaxTiltRadians) {
                 return "Tilted";
             }
         }
@@ -378,7 +378,7 @@ public class Vision extends SubsystemBase {
 
     /** Whether a pose lands outside the field, allowing a small border margin. */
     private boolean isOutsideField(Pose2d pose) {
-        double margin = VisionConstants.kFieldBorderMarginMeters;
+        double margin = VisionConstants.Filter.kFieldBorderMarginMeters;
 
         return pose.getX() < -margin
                 || pose.getX() > VisionConstants.kTagLayout.getFieldLength() + margin
