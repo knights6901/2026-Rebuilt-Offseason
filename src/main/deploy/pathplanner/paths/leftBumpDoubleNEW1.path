@@ -94,12 +94,6 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "wait",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
       "name": "primeShooter",
       "waypointRelativePos": 3.0,
       "endWaypointRelativePos": null,
@@ -107,34 +101,6 @@
         "type": "named",
         "data": {
           "name": "primeShooter"
-        }
-      }
-    },
-    {
-      "name": "autoAimShoot",
-      "waypointRelativePos": 4.0,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "autoAimShoot"
-        }
-      }
-    },
-    {
-      "name": "primeShooter",
-      "waypointRelativePos": 4,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "autoAimShoot",
-      "waypointRelativePos": 4,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "autoAimShoot"
         }
       }
     }
