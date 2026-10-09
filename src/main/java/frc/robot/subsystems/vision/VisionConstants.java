@@ -35,7 +35,7 @@ public final class VisionConstants {
      * number of tags used:
      *
      * <pre>
-     * xyStdDev = base * (1 + avgTagDist^2 / kDistanceDivisor) / numTags
+     * xyStdDev = base * (1 + avgTagDist ^ 2 / kDistanceDivisor) / numTags
      * </pre>
      *
      * These are starting values and need to be tuned on the field against the

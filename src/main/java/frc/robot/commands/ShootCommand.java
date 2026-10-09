@@ -27,7 +27,7 @@ public class ShootCommand extends SequentialCommandGroup {
                     shooter.shooterState = primingState;
                 }, shooter).until(shooter.primed),
                 new ParallelCommandGroup(
-                        kicker.kick(),
+                        kicker.kickWithUnjam(),
                         new RunCommand(() -> shooter.shooterState = shootingState, shooter)));
     }
 }
