@@ -2,7 +2,10 @@
   "robotWidth": 0.82,
   "robotLength": 0.86,
   "holonomicMode": true,
-  "pathFolders": [],
+  "pathFolders": [
+    "Legacy",
+    "New Ideas"
+  ],
   "autoFolders": [
     "Left",
     "Middle",
