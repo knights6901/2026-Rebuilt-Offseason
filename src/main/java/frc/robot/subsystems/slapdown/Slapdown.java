@@ -1,17 +1,20 @@
 package frc.robot.subsystems.slapdown;
 
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.networktables.DoublePublisher;
@@ -93,14 +96,24 @@ public class Slapdown extends SubsystemBase {
 
     /** Returns a command that deploys the arm to the intake position. */
     public Command slapdown() {
+        Debouncer jammed = new Debouncer(JamTime.in(Seconds));
+
         return run(() -> m_motor.setControl(m_request.withPosition(IntakePosition)))
-                .until(() -> getDeploymentState() == SlapdownState.DOWN);
+                .beforeStarting(() -> jammed.calculate(false))
+                .until(() -> getDeploymentState() == SlapdownState.DOWN)
+                .until(() -> jammed.calculate(isStalled()))
+                .andThen(stop());
     }
 
     /** Returns a command that retracts the arm to the home position. */
     public Command retractSlapdown() {
+        Debouncer jammed = new Debouncer(JamTime.in(Seconds));
+
         return run(() -> m_motor.setControl(m_request.withPosition(HomePosition)))
-                .until(() -> getDeploymentState() == SlapdownState.UP);
+                .beforeStarting(() -> jammed.calculate(false))
+                .until(() -> getDeploymentState() == SlapdownState.UP)
+                .until(() -> jammed.calculate(isStalled()))
+                .andThen(stop());
     }
 
     /**
@@ -206,6 +219,12 @@ public class Slapdown extends SubsystemBase {
         simState.setRawRotorPosition(motorPositionOf(Radians.of(m_armSim.getAngleRads())));
         simState.setRotorVelocity(RotationsPerSecond.of(
                 Radians.of(m_armSim.getVelocityRadPerSec()).in(Degrees) / kDegreesPerMotorRotation));
+    }
+
+    /** Whether the wheel is drawing high current while well below kicking speed. */
+    private boolean isStalled() {
+        return Math.abs(m_motor.getStatorCurrent().getValueAsDouble()) > JamCurrent.in(Amps)
+                && m_motor.getVelocity().getValue().lt(JamVelocity);
     }
 
     @Override

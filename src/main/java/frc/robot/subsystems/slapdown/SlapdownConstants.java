@@ -5,6 +5,8 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -17,8 +19,11 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
+import edu.wpi.first.units.measure.Time;
 
 public final class SlapdownConstants {
         /** The CAN ID of the slapdown motor. */
@@ -97,6 +102,18 @@ public final class SlapdownConstants {
          * the visualization against.
          */
         public final static boolean SimulateGravity = true;
+
+        /** The stator current above which the slapdown may be jammed. */
+        public final static Current JamCurrent = Amps.of(50);
+
+        /** The speed below which the slapdown may be jammed while slapping down. */
+        public final static AngularVelocity JamVelocity = RotationsPerSecond.of(0.3);
+
+        /** How long the slapdown must look jammed before it stops. */
+        public final static Time JamTime = Seconds.of(1);
+
+        /** How long the kicker reverses to clear a jam. */
+        public final static Time UnjamTime = Seconds.of(0.25);
 
         /**
          * PID/feedforward gains for driving down to the intake position. Needs tuning
