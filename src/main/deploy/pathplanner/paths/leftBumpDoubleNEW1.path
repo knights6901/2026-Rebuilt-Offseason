@@ -94,6 +94,17 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
+      "name": "intake",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "intake"
+        }
+      }
+    },
+    {
       "name": "primeShooter",
       "waypointRelativePos": 3.0,
       "endWaypointRelativePos": null,
@@ -101,6 +112,17 @@
         "type": "named",
         "data": {
           "name": "primeShooter"
+        }
+      }
+    },
+    {
+      "name": "stopIntake",
+      "waypointRelativePos": 3.5,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "stopIntake"
         }
       }
     }

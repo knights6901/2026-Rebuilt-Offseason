@@ -122,10 +122,32 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
+      "name": "intake",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "intake"
+        }
+      }
+    },
+    {
       "name": "primeShooter",
       "waypointRelativePos": 4.0,
       "endWaypointRelativePos": null,
       "command": null
+    },
+    {
+      "name": "stopIntake",
+      "waypointRelativePos": 4.5,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "stopIntake"
+        }
+      }
     }
   ],
   "globalConstraints": {
