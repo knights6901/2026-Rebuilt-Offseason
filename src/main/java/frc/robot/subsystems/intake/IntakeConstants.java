@@ -17,7 +17,7 @@ public final class IntakeConstants {
         public final static int MotorId = 31;
 
         /** The rotations per second for actively intaking balls. */
-        public final static AngularVelocity IntakeRPS = RotationsPerSecond.of(75);
+        public final static AngularVelocity IntakeRPS = RotationsPerSecond.of(55);
 
         /** PID and feedforward gains for the intake motor. */
         public final static Slot0Configs Gains = new Slot0Configs()

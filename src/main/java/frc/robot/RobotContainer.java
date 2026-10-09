@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 import frc.robot.Constants.Operator;
@@ -74,9 +74,11 @@ public class RobotContainer {
         driver.leftTrigger().whileTrue(intake.intake());
 
         driver.leftTrigger().whileTrue(intake.intake());
-        driver.rightTrigger().whileTrue(shooter.manuallyShoot(() -> RotationsPerSecond.of(75), kicker));
+        driver.leftBumper().whileTrue(intake.outtake());
 
-        driver.x().onTrue(new RunCommand(() -> slapdown.zeroSlapdownPosition(), slapdown));
+        driver.rightTrigger().whileTrue(shooter.manuallyShoot(() -> RotationsPerSecond.of(45), kicker));
+
+        driver.x().onTrue(new InstantCommand(() -> slapdown.zeroSlapdownPosition(), slapdown));
 
         driver.rightBumper().whileTrue(new AlignToHub(drivetrain, vision));
 

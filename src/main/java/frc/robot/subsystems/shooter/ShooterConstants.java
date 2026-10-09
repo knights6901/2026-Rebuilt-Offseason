@@ -45,7 +45,7 @@ public final class ShooterConstants {
          * The tolerance for determining whether the shooter is "primed" and ready to
          * shoot.
          */
-        public final static AngularVelocity PrimingTolerance = RotationsPerSecond.of(3);
+        public final static AngularVelocity PrimingTolerance = RotationsPerSecond.of(30);
 
         /** The default prime RPS for the shooter. */
         public final static AngularVelocity DefaultPrimeRPS = RotationsPerSecond.of(40);

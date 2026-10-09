@@ -103,7 +103,7 @@ public final class SlapdownConstants {
          * after intake modification.
          */
         public final static Slot0Configs DownGains = new Slot0Configs()
-                        .withKP(0.4).withKI(0).withKD(0.1)
+                        .withKP(0.6).withKI(0).withKD(0.1)
                         .withKS(0).withKV(1.3);
 
         /**
