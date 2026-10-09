@@ -5,6 +5,7 @@
 package frc.robot;
 
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 import static frc.robot.subsystems.drive.DriveConstants.kMaxAngularRate;
 import static frc.robot.subsystems.drive.DriveConstants.kMaxSpeed;
 import static frc.robot.subsystems.drive.DriveConstants.kRotationDeadband;
@@ -13,6 +14,8 @@ import static frc.robot.subsystems.drive.DriveConstants.kTranslationDeadband;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -23,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 import frc.robot.Constants.Operator;
 import frc.robot.commands.AlignToHub;
+import frc.robot.commands.StopSubsystems;
 import frc.robot.subsystems.drive.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.vision.Vision;
@@ -113,10 +117,38 @@ public class RobotContainer {
     }
 
     private void configurePathPlannerCommands() {
+        NamedCommands.registerCommand("stopSubsystems",
+                        new StopSubsystems(shooter, kicker, intake));
+
+        NamedCommands.registerCommand("autoAimShoot",
+                        shooter.autoAimShoot(drivetrain::getPose, kicker));
+
+        NamedCommands.registerCommand("fiftyRPSShoot",
+                        shooter.manuallyShoot(() -> RotationsPerSecond.of(50), kicker));
+
+        NamedCommands.registerCommand("primeShooter", shooter.prime().withTimeout(Seconds.of(3)));
+        NamedCommands.registerCommand("stopShooter",
+                        new InstantCommand(() -> {
+                                shooter.stop();
+                                kicker.stop();
+                        }, shooter, kicker));
+
+        NamedCommands.registerCommand("intake", intake.intake());
+        NamedCommands.registerCommand("stopIntake", intake.stop());
+
+        NamedCommands.registerCommand("rotateToHub",
+                        new AlignToHub(drivetrain, vision));
+
+        NamedCommands.registerCommand("slapdownTrigger", slapdown.slapdown());
+        NamedCommands.registerCommand("slapdownRetract", slapdown.retractSlapdown());
     }
 
     private void configureMirroredAutons() {
+        // mirrored left autos for right side
+        autoChooser.addOption("sam_rightHS", new PathPlannerAuto("sam_leftHS", true));
+        autoChooser.addOption("sam_rightDoubleHS", new PathPlannerAuto("sam_leftDoubleHS", true));
     }
+
 
     /**
      * Returns the autonomous command selected from the SmartDashboard chooser.
