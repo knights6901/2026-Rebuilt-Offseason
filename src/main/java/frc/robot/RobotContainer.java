@@ -82,7 +82,8 @@ public class RobotContainer {
 
         driver.rightTrigger().whileTrue(shooter.manuallyShoot(() -> RotationsPerSecond.of(65), kicker));
 
-        driver.x().onTrue(new InstantCommand(() -> slapdown.zeroSlapdownPosition(), slapdown));
+        driver.x().onTrue(slapdown.zeroPosition());
+        driver.y().onTrue(slapdown.deployedPosition());
 
         driver.rightBumper().whileTrue(new AlignToHub(drivetrain, vision));
 
@@ -127,26 +128,26 @@ public class RobotContainer {
 
     private void configurePathPlannerCommands() {
         NamedCommands.registerCommand("stopSubsystems",
-                        new StopSubsystems(shooter, kicker, intake));
+                new StopSubsystems(shooter, kicker, intake));
 
         NamedCommands.registerCommand("autoAimShoot",
-                        shooter.autoAimShoot(drivetrain::getPose, kicker));
+                shooter.autoAimShoot(drivetrain::getPose, kicker));
 
         NamedCommands.registerCommand("fiftyRPSShoot",
-                        shooter.manuallyShoot(() -> RotationsPerSecond.of(50), kicker));
+                shooter.manuallyShoot(() -> RotationsPerSecond.of(50), kicker));
 
         NamedCommands.registerCommand("primeShooter", shooter.prime().withTimeout(Seconds.of(3)));
         NamedCommands.registerCommand("stopShooter",
-                        new InstantCommand(() -> {
-                                shooter.stop();
-                                kicker.stop();
-                        }, shooter, kicker));
+                new InstantCommand(() -> {
+                    shooter.stop();
+                    kicker.stop();
+                }, shooter, kicker));
 
         NamedCommands.registerCommand("intake", intake.intake());
         NamedCommands.registerCommand("stopIntake", intake.stop());
 
         NamedCommands.registerCommand("rotateToHub",
-                        new AlignToHub(drivetrain, vision));
+                new AlignToHub(drivetrain, vision));
 
         NamedCommands.registerCommand("slapdownTrigger", slapdown.slapdown());
         NamedCommands.registerCommand("slapdownRetract", slapdown.retractSlapdown());
@@ -157,7 +158,6 @@ public class RobotContainer {
         autoChooser.addOption("sam_rightHS", new PathPlannerAuto("sam_leftHS", true));
         autoChooser.addOption("sam_rightDoubleHS", new PathPlannerAuto("sam_leftDoubleHS", true));
     }
-
 
     /**
      * Returns the autonomous command selected from the SmartDashboard chooser.

@@ -23,6 +23,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -86,7 +87,7 @@ public class Slapdown extends SubsystemBase {
     /** Configures the motor, resets its position to home, and holds it there. */
     public Slapdown() {
         m_motor.getConfigurator().apply(MotorConfig);
-        zeroSlapdownPosition();
+        zeroPosition();
 
         // Latch a hold on the home position so the arm is held up the moment the
         // robot is enabled, rather than sagging under gravity until something
@@ -130,10 +131,16 @@ public class Slapdown extends SubsystemBase {
     }
 
     /** Resets the motor's position encoder to zero (home position). */
-    public void zeroSlapdownPosition() {
-        m_motor.setPosition(0);
+    public Command zeroPosition() {
+        return new InstantCommand(() -> m_motor.setPosition(HomePosition), this);
     }
-    
+
+    /** Resets the motor's position encoder to deployed (deployed position). */
+    public Command deployedPosition() {
+        return new InstantCommand(() -> m_motor.setPosition(IntakePosition), this);
+
+    }
+
     /** Snaps the motor's position encoder to closest position (up or down). */
     public void snapSlapdownPosition() {
         if (getDeploymentState() == SlapdownState.DOWN) {

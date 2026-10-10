@@ -30,7 +30,7 @@ public final class SlapdownConstants {
         public final static int MotorId = 30;
 
         /** The position to lower the slapdown to when intaking a ball. */
-        public final static Angle IntakePosition = Rotations.of(7.5);
+        public final static Angle IntakePosition = Rotations.of(7.75);
         /** The default home position of slapdown system. */
         public final static Angle HomePosition = Rotations.of(0);
         /**
@@ -120,7 +120,7 @@ public final class SlapdownConstants {
          * after intake modification.
          */
         public final static Slot0Configs DownGains = new Slot0Configs()
-                        .withKP(0.6).withKI(0).withKD(0.1)
+                        .withKP(1).withKI(0).withKD(0.025)
                         .withKS(0).withKV(1.3);
 
         /**

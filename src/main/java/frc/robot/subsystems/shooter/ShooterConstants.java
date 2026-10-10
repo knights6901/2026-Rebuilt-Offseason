@@ -40,7 +40,7 @@ public final class ShooterConstants {
          * The tolerance for determining whether the shooter is "primed" and ready to
          * shoot.
          */
-        public final static AngularVelocity PrimingTolerance = RotationsPerSecond.of(15);
+        public final static AngularVelocity PrimingTolerance = RotationsPerSecond.of(5);
 
         /** The default prime RPS for the shooter. */
         public final static AngularVelocity DefaultPrimeRPS = RotationsPerSecond.of(40);
@@ -72,7 +72,7 @@ public final class ShooterConstants {
 
         /** The PID and feedforward settings for the shooter motors. */
         public final static Slot0Configs Gains = new Slot0Configs()
-                        .withKP(0.95).withKI(0).withKD(0.01)
+                        .withKP(0.8).withKI(0).withKD(0.025)
                         .withKS(0.25).withKV(0.122);
 
         /** The complete motor configuration for the shooter system. */
