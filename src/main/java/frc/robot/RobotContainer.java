@@ -86,6 +86,15 @@ public class RobotContainer {
 
         driver.rightBumper().whileTrue(new AlignToHub(drivetrain, vision));
 
+        /*
+         * Heading fallback for when no multi-tag solve has set it yet: point the robot
+         * straight away from the driver and press to make that "forward".
+         */
+        driver.start().onTrue(drivetrain.runOnce(() -> {
+            drivetrain.seedFieldCentric();
+            vision.resetEstimatorHeading();
+        }));
+
         // driver.rightBumper().whileTrue(shooter.shootCommand(RotationsPerSecond.of(75)));
         // driver.rightTrigger().whileTrue(shooter.autoAimShoot(drivetrain::getPose,
         // kicker, indexer));

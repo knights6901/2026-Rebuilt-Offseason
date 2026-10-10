@@ -45,7 +45,21 @@ public final class VisionConstants {
         public static final double kSingleTagXYBase = 0.15;
         public static final double kMultiTagXYBase = 0.06;
         public static final double kDistanceDivisor = 30.0;
-        public static final double kTheta = 0.05;
+
+        /**
+         * Heading standard deviation for multi-tag solves, in radians, scaled the same
+         * way as the XY bases. Multi-tag is the only strategy that actually measures
+         * heading, so it is the only one allowed to correct it.
+         */
+        public static final double kMultiTagThetaBase = 0.4;
+
+        /**
+         * Heading standard deviation for single-tag solves. The trig solve takes its
+         * heading from the drivetrain rather than measuring it, so this is made large
+         * enough that the Kalman gain for theta is effectively zero. Large but finite,
+         * to avoid overflow inside the filter.
+         */
+        public static final double kSingleTagTheta = 1e6;
     }
 
     /** Thresholds past which a pipeline result or pose estimate is discarded. */

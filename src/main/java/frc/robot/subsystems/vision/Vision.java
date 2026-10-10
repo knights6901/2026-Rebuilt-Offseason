@@ -41,12 +41,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  * Supports full camera simulation when running in sim.
  *
  * <p>
- * Vision only ever corrects the <i>translation</i> of the drivetrain pose. The
- * gyro is treated as the sole source of truth for heading, because CTRE's
- * field-centric swerve requests take "forward" from the fused pose's rotation
- * --
- * letting vision rotate the pose would move the driver's forward direction out
- * from under them mid-match.
+ * Every accepted estimate corrects the <i>translation</i> of the drivetrain
+ * pose, but only multi-tag solves correct its heading. CTRE's field-centric
+ * swerve requests take "forward" from the fused pose's rotation, so a wrong
+ * heading drives the wrong way; single-tag solves can't fix that because they
+ * get their heading from the drivetrain in the first place.
  */
 public class Vision extends SubsystemBase {
     private final PhotonCamera photonCam;
@@ -279,9 +278,21 @@ public class Vision extends SubsystemBase {
             return;
         }
 
+        boolean isMultiTag = numTags > 1;
+
         if (!hasSeededPose) {
+            /*
+             * The single-tag trig solve borrows its heading from the drivetrain, so
+             * seeding from it would hand an unknown heading straight back, along with a
+             * translation computed from it. Wait for a solve that measures heading.
+             */
+            if (!isMultiTag) {
+                return;
+            }
+
             hasSeededPose = true;
             drivetrain.resetPose(pose2d);
+            resetEstimatorHeading();
             return;
         }
 
@@ -289,23 +300,21 @@ public class Vision extends SubsystemBase {
          * Trust falls off with the square of tag distance and improves with the number
          * of tags in the solution.
          */
-        double base = numTags > 1
-                ? VisionConstants.StdDevs.kMultiTagXYBase
-                : VisionConstants.StdDevs.kSingleTagXYBase;
-        double xyStdDev = base
-                * (1 + Math.pow(avgTagDistance, 2) / VisionConstants.StdDevs.kDistanceDivisor)
-                / numTags;
+        double trustScale = (1 + Math.pow(avgTagDistance, 2) / VisionConstants.StdDevs.kDistanceDivisor) / numTags;
+        double xyStdDev = trustScale
+                * (isMultiTag ? VisionConstants.StdDevs.kMultiTagXYBase : VisionConstants.StdDevs.kSingleTagXYBase);
 
         /*
-         * Heading is taken from the drivetrain rather than from vision, and paired with
-         * an enormous theta standard deviation. Either alone would keep vision from
-         * rotating the pose; together they make it structurally impossible, which is
-         * what keeps field-oriented driving identical to gyro-only behaviour.
+         * Only multi-tag solves get to correct heading. A single-tag estimate carries
+         * the drivetrain's own heading from the moment of capture, and the enormous
+         * theta standard deviation keeps it from moving the heading at all.
          */
-        Pose2d measurement = new Pose2d(pose2d.getTranslation(), drivetrain.getPose().getRotation());
-        Matrix<N3, N1> stdDevs = VecBuilder.fill(xyStdDev, xyStdDev, VisionConstants.StdDevs.kTheta);
+        double thetaStdDev = isMultiTag
+                ? trustScale * VisionConstants.StdDevs.kMultiTagThetaBase
+                : VisionConstants.StdDevs.kSingleTagTheta;
+        Matrix<N3, N1> stdDevs = VecBuilder.fill(xyStdDev, xyStdDev, thetaStdDev);
 
-        drivetrain.addVisionMeasurement(measurement, estimate.timestampSeconds, stdDevs);
+        drivetrain.addVisionMeasurement(pose2d, estimate.timestampSeconds, stdDevs);
     }
 
     /**
