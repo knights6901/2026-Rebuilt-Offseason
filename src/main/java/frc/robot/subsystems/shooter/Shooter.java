@@ -35,11 +35,8 @@ import frc.robot.Constants.GameConstants;
  * commands. Ballistics math lives in {@link ShooterPhysics}.
  */
 public class Shooter extends SubsystemBase {
-    private final TalonFX m_motorRightTop = new TalonFX(RightTopMotorId, CANConstants.kSubsystemNetwork);
-    private final TalonFX m_motorLeftTop = new TalonFX(LeftTopMotorId, CANConstants.kSubsystemNetwork);
-
-    private final TalonFX m_motorRightBottom = new TalonFX(RightBottomMotorId, CANConstants.kSubsystemNetwork);
-    private final TalonFX m_motorLeftBottom = new TalonFX(LeftBottomMotorId, CANConstants.kSubsystemNetwork);
+    private final TalonFX m_motorRight = new TalonFX(RightMotorId, CANConstants.kSubsystemNetwork);
+    private final TalonFX m_motorLeft = new TalonFX(LeftMotorId, CANConstants.kSubsystemNetwork);
 
     private final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
 
@@ -87,15 +84,10 @@ public class Shooter extends SubsystemBase {
 
     /** Configures both motors and sets the left to follow the right, opposed. */
     public Shooter() {
-        m_motorRightTop.getConfigurator().apply(MotorConfig);
-        m_motorLeftTop.getConfigurator().apply(MotorConfig);
+        m_motorRight.getConfigurator().apply(MotorConfig);
+        m_motorLeft.getConfigurator().apply(MotorConfig);
 
-        m_motorRightBottom.getConfigurator().apply(MotorConfig);
-        m_motorLeftBottom.getConfigurator().apply(MotorConfig);
-
-        m_motorRightTop.setControl(new Follower(LeftTopMotorId, MotorAlignmentValue.Opposed));
-        m_motorRightBottom.setControl(new Follower(LeftTopMotorId, MotorAlignmentValue.Opposed));
-        m_motorLeftBottom.setControl(new Follower(LeftTopMotorId, MotorAlignmentValue.Aligned));
+        m_motorRight.setControl(new Follower(LeftMotorId, MotorAlignmentValue.Opposed));
     }
 
     /**
@@ -109,12 +101,12 @@ public class Shooter extends SubsystemBase {
     /** Spins the flywheel at {@code rps}, e.g. for auto-aim shots. */
     public void shoot(AngularVelocity rps) {
         targetRPS = rps;
-        m_motorLeftTop.setControl(m_request.withVelocity(rps));
+        m_motorLeft.setControl(m_request.withVelocity(rps));
     }
 
     /** Stops the flywheel by applying neutral output to both motors. */
     public void stop() {
-        m_motorLeftTop.setControl(new NeutralOut());
+        m_motorLeft.setControl(new NeutralOut());
         shooterState = ShooterState.OFF;
         targetRPS = RotationsPerSecond.of(0);
     }
@@ -147,7 +139,7 @@ public class Shooter extends SubsystemBase {
 
     /** The flywheel's measured angular velocity. */
     public AngularVelocity getCurrentRPS() {
-        return m_motorLeftTop.getVelocity().getValue();
+        return m_motorLeft.getVelocity().getValue();
     }
 
     /** The flywheel's currently commanded angular velocity. */
@@ -248,7 +240,7 @@ public class Shooter extends SubsystemBase {
 
     @Override
     public void periodic() {
-        shooterSpeedPublisher.set(m_motorLeftTop.getVelocity().getValueAsDouble());
+        shooterSpeedPublisher.set(m_motorLeft.getVelocity().getValueAsDouble());
         targetSpeedPublisher.set(targetRPS.magnitude());
     }
 }

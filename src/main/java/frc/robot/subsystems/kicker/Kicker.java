@@ -5,6 +5,7 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -26,7 +27,12 @@ public class Kicker extends SubsystemBase {
 
     /** Returns a command that spins the kicker wheel at the configured velocity. */
     public Command kick() {
-        return run(() -> m_motor.setControl(new VelocityVoltage(KickerPower)));
+        return kick(KickerPower);
+    }
+
+    /** Returns a command that spins the kicker wheel at the given velocity. */
+    public Command kick(AngularVelocity speed) {
+        return run(() -> m_motor.setControl(new VelocityVoltage(speed)));
     }
 
     /** Returns a command that spins the kicker wheel in reverse. */

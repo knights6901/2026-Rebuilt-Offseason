@@ -45,14 +45,7 @@ public final class VisionConstants {
         public static final double kSingleTagXYBase = 0.15;
         public static final double kMultiTagXYBase = 0.06;
         public static final double kDistanceDivisor = 30.0;
-
-        /**
-         * Standard deviation reported for the heading component of every vision
-         * measurement. Vision never corrects heading -- the gyro is treated as truth --
-         * so this is made large enough that the Kalman gain for theta is effectively
-         * zero. Large but finite, to avoid overflow inside the filter.
-         */
-        public static final double kTheta = 1e6;
+        public static final double kTheta = 0.05;
     }
 
     /** Thresholds past which a pipeline result or pose estimate is discarded. */

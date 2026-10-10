@@ -24,6 +24,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -41,6 +43,8 @@ public class Drive extends TunerSwerveDrivetrain implements Subsystem {
     private static final double kSimLoopPeriod = 0.004; // 4 ms
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
+
+    public final Field2d driveField = new Field2d();
 
     private final Telemetry logger = new Telemetry(DriveConstants.kMaxSpeed);
 
@@ -96,6 +100,7 @@ public class Drive extends TunerSwerveDrivetrain implements Subsystem {
         registerTelemetry(logger::telemeterize);
 
         configureAutoBuilder();
+        SmartDashboard.putData("DriveField", driveField);
     }
 
     /**
@@ -122,6 +127,7 @@ public class Drive extends TunerSwerveDrivetrain implements Subsystem {
             startSimThread();
         }
         registerTelemetry(logger::telemeterize);
+        SmartDashboard.putData("DriveField", driveField);
     }
 
     /**
@@ -163,6 +169,7 @@ public class Drive extends TunerSwerveDrivetrain implements Subsystem {
             startSimThread();
         }
         registerTelemetry(logger::telemeterize);
+        SmartDashboard.putData("DriveField", driveField);
     }
 
     /**
@@ -220,6 +227,8 @@ public class Drive extends TunerSwerveDrivetrain implements Subsystem {
                 m_hasAppliedOperatorPerspective = true;
             });
         }
+
+        driveField.setRobotPose(getPose());
     }
 
     private void startSimThread() {

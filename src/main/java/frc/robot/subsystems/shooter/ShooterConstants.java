@@ -20,15 +20,10 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 
 public final class ShooterConstants {
-        /** The CAN ID of the left top shooter motor. */
-        public final static int LeftTopMotorId = 23;
-        /** The CAN ID of the right top shooter motor. */
-        public final static int RightTopMotorId = 21;
-
-        /** The CAN ID of the left bottom shooter motor. */
-        public final static int LeftBottomMotorId = 22;
-        /** The CAN ID of the right bottom shooter motor. */
-        public final static int RightBottomMotorId = 20;
+        /** The CAN ID of the left shooter motor. */
+        public final static int LeftMotorId = 23;
+        /** The CAN ID of the right shooter motor. */
+        public final static int RightMotorId = 21;
 
         /** The distance from the center of the robot to the shooter (horizontally). */
         public final static Distance CenterToShooter = Inches.of(8);
@@ -45,7 +40,7 @@ public final class ShooterConstants {
          * The tolerance for determining whether the shooter is "primed" and ready to
          * shoot.
          */
-        public final static AngularVelocity PrimingTolerance = RotationsPerSecond.of(30);
+        public final static AngularVelocity PrimingTolerance = RotationsPerSecond.of(15);
 
         /** The default prime RPS for the shooter. */
         public final static AngularVelocity DefaultPrimeRPS = RotationsPerSecond.of(40);

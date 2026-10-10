@@ -8,12 +8,13 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
  * Team-authored drivetrain constants.
  * <p>
  * Everything Tuner X owns (gains, CAN IDs, encoder offsets, gear ratios) lives
- * in {@link TunerConstants} and is overwritten on regeneration. Anything we tune
+ * in {@link TunerConstants} and is overwritten on regeneration. Anything we
+ * tune
  * by hand belongs here.
  */
 public final class DriveConstants {
     /** Fraction of the measured free speed we allow the driver to command. */
-    private static final double kSpeedScalar = 1.0;
+    private static final double kSpeedScalar = 0.1;
 
     /** Max commanded chassis speed, in meters per second. */
     public static final double kMaxSpeed = kSpeedScalar * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);

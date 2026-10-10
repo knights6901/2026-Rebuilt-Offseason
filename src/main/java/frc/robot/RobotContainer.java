@@ -76,7 +76,7 @@ public class RobotContainer {
         driver.leftTrigger().whileTrue(intake.intake());
         driver.leftBumper().whileTrue(intake.outtake());
 
-        driver.rightTrigger().whileTrue(shooter.manuallyShoot(() -> RotationsPerSecond.of(45), kicker));
+        driver.rightTrigger().whileTrue(shooter.manuallyShoot(() -> RotationsPerSecond.of(65), kicker));
 
         driver.x().onTrue(new InstantCommand(() -> slapdown.zeroSlapdownPosition(), slapdown));
 
@@ -107,8 +107,8 @@ public class RobotContainer {
 
         drivetrain.setDefaultCommand(
                 drivetrain.applyRequest(() -> drive
-                        .withVelocityX(driver.getLeftY() * kMaxSpeed)
-                        .withVelocityY(driver.getLeftX() * kMaxSpeed)
+                        .withVelocityX(-driver.getLeftY() * kMaxSpeed)
+                        .withVelocityY(-driver.getLeftX() * kMaxSpeed)
                         .withRotationalRate(-driver.getRightX() * kMaxAngularRate)));
     }
 

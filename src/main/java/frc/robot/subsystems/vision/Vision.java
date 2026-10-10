@@ -279,13 +279,9 @@ public class Vision extends SubsystemBase {
             return;
         }
 
-        /*
-         * A reseed is a deliberate request to snap to where vision says we are, so it
-         * bypasses the filter -- but only the translation, never the heading.
-         */
         if (!hasSeededPose) {
             hasSeededPose = true;
-            drivetrain.resetTranslation(pose2d.getTranslation());
+            drivetrain.resetPose(pose2d);
             return;
         }
 
