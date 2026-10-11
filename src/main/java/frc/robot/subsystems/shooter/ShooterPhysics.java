@@ -40,7 +40,7 @@ public final class ShooterPhysics {
                 ? DampingNearCoefficient
                 : DampingFarCoefficient;
 
-        return RotationsPerSecond.of(damping * rps);
+        return RotationsPerSecond.of(damping * rps + 3.0);
     }
 
     /**

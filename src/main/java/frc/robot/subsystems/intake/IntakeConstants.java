@@ -11,13 +11,13 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.units.measure.AngularVelocity;
-
+        
 public final class IntakeConstants {
         /** The CAN ID of the intake motor. */
         public final static int MotorId = 31;
 
         /** The rotations per second for actively intaking balls. */
-        public final static AngularVelocity IntakeRPS = RotationsPerSecond.of(75);
+        public final static AngularVelocity IntakeRPS = RotationsPerSecond.of(52);
 
         /** PID and feedforward gains for the intake motor. */
         public final static Slot0Configs Gains = new Slot0Configs()

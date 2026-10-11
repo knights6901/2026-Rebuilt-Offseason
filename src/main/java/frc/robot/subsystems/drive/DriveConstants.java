@@ -14,7 +14,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
  */
 public final class DriveConstants {
     /** Fraction of the measured free speed we allow the driver to command. */
-    private static final double kSpeedScalar = 0.55;
+    private static final double kSpeedScalar = 0.70;
 
     /** Max commanded chassis speed, in meters per second. */
     public static final double kMaxSpeed = kSpeedScalar * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);

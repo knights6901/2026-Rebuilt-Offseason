@@ -12,6 +12,7 @@ import static frc.robot.subsystems.drive.DriveConstants.kRotationDeadband;
 import static frc.robot.subsystems.drive.DriveConstants.kTranslationDeadband;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
@@ -22,8 +23,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-
 import frc.robot.Constants.Operator;
 import frc.robot.commands.AlignToHub;
 import frc.robot.commands.StopSubsystems;
@@ -85,6 +86,14 @@ public class RobotContainer {
         // kicker, slapdown));
         driver.rightTrigger().whileTrue(new ZoneShoot(drivetrain, vision, shooter, kicker, slapdown));
 
+        driver.povUp().whileTrue(new RunCommand(() -> {
+            slapdown.m_motor.setControl(new DutyCycleOut(0.15));
+        }, slapdown));
+        driver.povDown().whileTrue(new RunCommand(() -> {
+            slapdown.m_motor.setControl(new DutyCycleOut(-0.15));
+        }, slapdown));
+        driver.povRight().whileTrue(shooter.autoAimShoot(drivetrain::getPose, kicker, slapdown));
+
         driver.x().onTrue(slapdown.zeroPosition());
         driver.y().onTrue(slapdown.deployedPosition());
 
@@ -115,7 +124,7 @@ public class RobotContainer {
     private void configureDefaultCommands() {
         led.setDefaultCommand(led.runPattern(LEDConstants.ScrollRainbowPattern));
         intake.setDefaultCommand(intake.stop());
-        shooter.setDefaultCommand(shooter.shootCommand(RotationsPerSecond.of(30)));
+        shooter.setDefaultCommand(shooter.neutralOut());
         kicker.setDefaultCommand(kicker.stop());
 
         drivetrain.setDefaultCommand(

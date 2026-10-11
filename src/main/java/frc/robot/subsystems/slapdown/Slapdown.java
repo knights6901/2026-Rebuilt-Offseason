@@ -54,7 +54,7 @@ public class Slapdown extends SubsystemBase {
     private static final double kDegreesPerMotorRotation = DeployedAngle.minus(HomeAngle).in(Degrees)
             / IntakePosition.minus(HomePosition).in(Rotations);
 
-    private final TalonFX m_motor = new TalonFX(MotorId, CANConstants.kSubsystemNetwork);
+    public final TalonFX m_motor = new TalonFX(MotorId, CANConstants.kSubsystemNetwork);
     private final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
 
     private final DoublePublisher slapdownPositionPublisher = NetworkTableInstance.getDefault()
@@ -140,7 +140,7 @@ public class Slapdown extends SubsystemBase {
 
     /** Resets the motor's position encoder to zero (home position). */
     public Command zeroPosition() {
-        return new InstantCommand(() -> m_motor.setPosition(HomePosition), this);
+        return new InstantCommand(() -> m_motor.setPosition(HomePosition), this).andThen(stop());
     }
 
     /** Resets the motor's position encoder to deployed (deployed position). */

@@ -216,7 +216,6 @@ public class Shooter extends SubsystemBase {
             Supplier<Pose2d> currentPoseSupplier,
             Kicker kicker,
             Slapdown slapdown) {
-        /* Looked up while shooting: the alliance isn't known yet when this is built. */
         Supplier<Translation3d> hub = () -> {
             Translation2d hubXY = GameConstants.getHubLocation();
 

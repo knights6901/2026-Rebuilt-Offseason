@@ -11,9 +11,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "race",
           "data": {
-            "pathName": "leftHS_Leave"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "leftHS_Leave"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "intake"
+                }
+              }
+            ]
           }
         },
         {
