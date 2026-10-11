@@ -3,6 +3,8 @@ package frc.robot.commands;
 import static edu.wpi.first.units.Units.Seconds;
 
 import java.util.function.Supplier;
+
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -22,7 +24,6 @@ public class ShootCommand extends SequentialCommandGroup {
     public ShootCommand(
             Shooter shooter,
             Kicker kicker,
-            Slapdown slapdown,
             Supplier<AngularVelocity> rpsSupplier,
             ShooterState primingState,
             ShooterState shootingState) {
@@ -35,7 +36,7 @@ public class ShootCommand extends SequentialCommandGroup {
                         kicker.kickWithUnjam(),
                         new RunCommand(() -> {
                             shooter.shooterState = shootingState;
-                        }, shooter)).withTimeout(Seconds.of(1))
+                        }, shooter))
         // new SequentialCommandGroup(
         // Commands.waitSeconds(5),
         // Commands.runOnce(() -> slapdown.zeroPosition(), slapdown),

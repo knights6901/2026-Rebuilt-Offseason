@@ -70,37 +70,12 @@
       "rotationDegrees": -90.0
     }
   ],
-  "constraintZones": [
-    {
-      "name": "Constraints Zone",
-      "minWaypointRelativePos": 2.16896404109589,
-      "maxWaypointRelativePos": 3.0,
-      "constraints": {
-        "maxVelocity": 0.4,
-        "maxAcceleration": 3.0,
-        "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 720.0,
-        "nominalVoltage": 12.0,
-        "unlimited": false
-      }
-    }
-  ],
+  "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "slapdownTrigger",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "slapdownTrigger"
-        }
-      }
-    },
-    {
       "name": "toggleIntake",
-      "waypointRelativePos": 0.949875930521091,
+      "waypointRelativePos": 1.254937163375222,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",

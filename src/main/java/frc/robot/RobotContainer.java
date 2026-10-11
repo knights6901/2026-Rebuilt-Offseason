@@ -63,12 +63,12 @@ public class RobotContainer {
         shooter = new Shooter();
         slapdown = new Slapdown();
 
-        autoChooser = AutoBuilder.buildAutoChooser("zero");
-        SmartDashboard.putData("Auto Chooser", autoChooser);
-
+        configurePathPlannerCommands();
         configureBindings();
         configureDefaultCommands();
-        configurePathPlannerCommands();
+
+        autoChooser = AutoBuilder.buildAutoChooser("zero");
+        SmartDashboard.putData("Auto Chooser", autoChooser);
         configureMirroredAutons();
     }
 
@@ -80,7 +80,9 @@ public class RobotContainer {
         driver.leftTrigger().whileTrue(intake.intake());
         driver.leftBumper().whileTrue(intake.outtake());
 
-        driver.rightTrigger().whileTrue(shooter.manuallyShoot(() -> RotationsPerSecond.of(65), kicker));
+        // driver.rightTrigger().whileTrue(shooter.manuallyShoot(() ->
+        // RotationsPerSecond.of(65), kicker));
+        driver.rightTrigger().whileTrue(shooter.autoAimShoot(drivetrain::getPose, kicker));
 
         driver.x().onTrue(slapdown.zeroPosition());
         driver.y().onTrue(slapdown.deployedPosition());
@@ -116,7 +118,7 @@ public class RobotContainer {
     private void configureDefaultCommands() {
         led.setDefaultCommand(led.runPattern(LEDConstants.ScrollRainbowPattern));
         intake.setDefaultCommand(intake.stop());
-        shooter.setDefaultCommand(shooter.neutralOut());
+        shooter.setDefaultCommand(shooter.shootCommand(RotationsPerSecond.of(30)));
         kicker.setDefaultCommand(kicker.stop());
 
         drivetrain.setDefaultCommand(
@@ -157,6 +159,8 @@ public class RobotContainer {
         // mirrored left autos for right side
         autoChooser.addOption("sam_rightHS", new PathPlannerAuto("sam_leftHS", true));
         autoChooser.addOption("sam_rightDoubleHS", new PathPlannerAuto("sam_leftDoubleHS", true));
+        autoChooser.addOption("sam_rightDoubleBumpNEW", new PathPlannerAuto("sam_leftDoubleBumpNEW", true));
+        autoChooser.addOption("stemgals_rightDoubleHS", new PathPlannerAuto("stemgals_leftDoubleHS", true));
     }
 
     /**

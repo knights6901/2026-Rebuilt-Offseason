@@ -57,18 +57,18 @@ public final class ShooterConstants {
          * The scaling constant to correct for damping in the shooter mechanism when the
          * robot is "far" from the hub.
          */
-        public final static double DampingFarCoefficient = 1.75;
+        public final static double DampingFarCoefficient = 2;
         /**
          * The scaling constant to correct for damping in the shooter mechanism when the
          * robot is "near" from the hub.
          */
-        public final static double DampingNearCoefficient = 2.7;
+        public final static double DampingNearCoefficient = 3;
 
         /** The maximum distance to be considered "near" to the hub. */
         public final static Distance NearHubDistance = Meters.of(2);
 
         /** The radius of the shooter flywheel, used to convert exit velocity to RPS. */
-        public final static Distance WheelRadius = Meters.of(0.051);
+        public final static Distance WheelRadius = Inches.of(2);
 
         /** The PID and feedforward settings for the shooter motors. */
         public final static Slot0Configs Gains = new Slot0Configs()
