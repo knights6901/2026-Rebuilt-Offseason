@@ -161,6 +161,7 @@ public class RobotContainer {
         autoChooser.addOption("sam_rightDoubleHS", new PathPlannerAuto("sam_leftDoubleHS", true));
         autoChooser.addOption("sam_rightDoubleBumpNEW", new PathPlannerAuto("sam_leftDoubleBumpNEW", true));
         autoChooser.addOption("stemgals_rightDoubleHS", new PathPlannerAuto("stemgals_leftDoubleHS", true));
+        autoChooser.addOption("ntx_rightauto", new PathPlannerAuto("ntx_leftauto", true));
     }
 
     /**
