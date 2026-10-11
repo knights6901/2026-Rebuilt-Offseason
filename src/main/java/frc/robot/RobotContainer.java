@@ -81,8 +81,8 @@ public class RobotContainer {
         driver.leftTrigger().whileTrue(intake.intake());
         driver.leftBumper().whileTrue(intake.outtake());
 
-        // driver.rightTrigger().whileTrue(shooter.autoAimShoot(drivetrain::getPose,
-        // kicker, slapdown));
+        driver.rightTrigger().whileTrue(shooter.autoAimShoot(drivetrain::getPose,
+                kicker, slapdown));
         driver.rightTrigger().whileTrue(new ZoneShoot(drivetrain, vision, shooter, kicker, slapdown));
 
         driver.x().onTrue(slapdown.zeroPosition());

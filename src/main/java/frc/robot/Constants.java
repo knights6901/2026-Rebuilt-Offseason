@@ -76,8 +76,11 @@ public final class Constants {
                 new Translation2d(Inches.of(606.72), Inches.of(94.09)),
                 new Rotation2d(Degrees.of(180)));
 
-        /** The height of the target hub from the ground. */
-        public final static Distance HubTargetHeight = Meters.of(1.524);
+        /**
+         * The height of the hub's opening from the ground, which a ball has to come
+         * down through. From the game manual.
+         */
+        public final static Distance HubTargetHeight = Inches.of(72);
 
         /** Returns the position of the hub based on the current alliance. */
         public static Translation2d getHubLocation() {
