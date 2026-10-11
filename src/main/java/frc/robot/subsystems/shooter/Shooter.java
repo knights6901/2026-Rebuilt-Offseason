@@ -196,8 +196,10 @@ public class Shooter extends SubsystemBase {
             Translation2d xyProjection = new Translation2d(
                     target.getMeasureX(), target.getMeasureY());
 
+            /* The ball leaves from the shooter, which sits closer to the target. */
             Distance shotGroundDistance = Meters
-                    .of(currentPose.getTranslation().getDistance(xyProjection));
+                    .of(currentPose.getTranslation().getDistance(xyProjection))
+                    .minus(CenterToShooter);
 
             return ShooterPhysics.calculateRPS(shotGroundDistance, target.getMeasureZ());
         };
