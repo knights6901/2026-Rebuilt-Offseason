@@ -157,11 +157,9 @@ public class RobotContainer {
 
     private void configureMirroredAutons() {
         // mirrored left autos for right side
-        autoChooser.addOption("sam_rightHS", new PathPlannerAuto("sam_leftHS", true));
-        autoChooser.addOption("sam_rightDoubleHS", new PathPlannerAuto("sam_leftDoubleHS", true));
-        autoChooser.addOption("sam_rightDoubleBumpNEW", new PathPlannerAuto("sam_leftDoubleBumpNEW", true));
-        autoChooser.addOption("stemgals_rightDoubleHS", new PathPlannerAuto("stemgals_leftDoubleHS", true));
-        autoChooser.addOption("ntx_rightauto", new PathPlannerAuto("ntx_leftauto", true));
+        autoChooser.addOption("ntx_rightHS", new PathPlannerAuto("ntx_leftHS", true));
+        autoChooser.addOption("ntx_rightDoubleHS", new PathPlannerAuto("ntx_leftDoubleHS", true));
+        autoChooser.addOption("ntx_rightDoubleBumpNEW", new PathPlannerAuto("ntx_leftDoubleBumpNEW", true));
     }
 
     /**
