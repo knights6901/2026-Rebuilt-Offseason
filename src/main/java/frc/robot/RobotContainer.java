@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.Operator;
 import frc.robot.commands.AlignToHub;
 import frc.robot.commands.StopSubsystems;
+import frc.robot.commands.ZoneShoot;
 import frc.robot.subsystems.drive.TunerConstants;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.vision.Vision;
@@ -80,9 +81,9 @@ public class RobotContainer {
         driver.leftTrigger().whileTrue(intake.intake());
         driver.leftBumper().whileTrue(intake.outtake());
 
-        // driver.rightTrigger().whileTrue(shooter.manuallyShoot(() ->
-        // RotationsPerSecond.of(65), kicker));
-        driver.rightTrigger().whileTrue(shooter.autoAimShoot(drivetrain::getPose, kicker));
+        // driver.rightTrigger().whileTrue(shooter.autoAimShoot(drivetrain::getPose,
+        // kicker, slapdown));
+        driver.rightTrigger().whileTrue(new ZoneShoot(drivetrain, vision, shooter, kicker, slapdown));
 
         driver.x().onTrue(slapdown.zeroPosition());
         driver.y().onTrue(slapdown.deployedPosition());
@@ -97,10 +98,6 @@ public class RobotContainer {
             drivetrain.seedFieldCentric();
             vision.resetEstimatorHeading();
         }));
-
-        // driver.rightBumper().whileTrue(shooter.shootCommand(RotationsPerSecond.of(75)));
-        // driver.rightTrigger().whileTrue(shooter.autoAimShoot(drivetrain::getPose,
-        // kicker, indexer));
 
         /*
          * Panic switch: hold to shut vision out of the pose estimator entirely, in case
@@ -133,10 +130,10 @@ public class RobotContainer {
                 new StopSubsystems(shooter, kicker, intake));
 
         NamedCommands.registerCommand("autoAimShoot",
-                shooter.autoAimShoot(drivetrain::getPose, kicker));
+                shooter.autoAimShoot(drivetrain::getPose, kicker, slapdown));
 
         NamedCommands.registerCommand("fiftyRPSShoot",
-                shooter.manuallyShoot(() -> RotationsPerSecond.of(50), kicker));
+                shooter.manuallyShoot(() -> RotationsPerSecond.of(50), kicker, slapdown));
 
         NamedCommands.registerCommand("primeShooter", shooter.prime().withTimeout(Seconds.of(3)));
         NamedCommands.registerCommand("stopShooter",

@@ -50,6 +50,17 @@ public final class Constants {
          */
         public static final Distance BlueRightTrenchY = Meters.of(0.634);
 
+        /**
+         * The x-position of the edge of the blue alliance zone, which is the
+         * alliance-side face of the blue hub.
+         */
+        public static final Distance BlueAllianceZoneX = Meters.of(4.008);
+        /**
+         * The x-position of the edge of the red alliance zone, which is the
+         * alliance-side face of the red hub.
+         */
+        public static final Distance RedAllianceZoneX = Meters.of(12.505);
+
         /** The x-position of the pass-line on the blue alliance side of the field. */
         public static final Distance BluePassLineX = Meters.of(2.306);
         /** The x-position of the pass-line on the red alliance side of the field. */
@@ -90,6 +101,25 @@ public final class Constants {
             return (DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Blue)
                     ? new Translation2d(GameConstants.BluePassLineX, y)
                     : new Translation2d(GameConstants.RedPassLineX, y);
+        }
+
+        /** Whether the robot's center is inside the current alliance's zone. */
+        public static boolean isInAllianceZone(Pose2d drivetrainPose) {
+            Distance x = drivetrainPose.getMeasureX();
+
+            return (DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Blue)
+                    ? x.lt(BlueAllianceZoneX)
+                    : x.gt(RedAllianceZoneX);
+        }
+
+        /**
+         * Returns the field direction pointing from midfield straight at the current
+         * alliance's wall: -X for blue, +X for red.
+         */
+        public static Rotation2d getAllianceWallDirection() {
+            return (DriverStation.getAlliance().orElse(Alliance.Red) == Alliance.Blue)
+                    ? Rotation2d.k180deg
+                    : Rotation2d.kZero;
         }
 
         public static Pose2d getLeftDepotPose() {

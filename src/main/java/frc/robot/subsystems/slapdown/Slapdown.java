@@ -20,6 +20,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -102,6 +103,26 @@ public class Slapdown extends SubsystemBase {
     public Command retractSlapdown() {
         return runOnce(() -> m_motor.setControl(m_request.withPosition(HomePosition)))
                 .until(() -> getDeploymentState() == SlapdownState.UP);
+    }
+
+    /**
+     * Returns a command that waits out {@code AgitationDelay}, then swings the arm
+     * up and back down over and over to shove balls toward the kicker. When it
+     * ends, the arm goes back to wherever it was being held beforehand.
+     */
+    public Command agitate() {
+        double[] restPosition = new double[1];
+
+        return Commands.sequence(
+                Commands.waitTime(AgitationDelay),
+                Commands.sequence(
+                        runOnce(() -> m_motor.setControl(m_request.withPosition(HomePosition))),
+                        Commands.waitTime(AgitationGap),
+                        runOnce(() -> m_motor.setControl(m_request.withPosition(IntakePosition))),
+                        Commands.waitTime(AgitationGap))
+                        .repeatedly())
+                .beforeStarting(() -> restPosition[0] = m_request.Position)
+                .finallyDo(() -> m_motor.setControl(m_request.withPosition(restPosition[0])));
     }
 
     /**

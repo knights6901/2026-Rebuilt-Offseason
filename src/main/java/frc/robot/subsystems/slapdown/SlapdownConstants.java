@@ -5,6 +5,7 @@ import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Kilograms;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Seconds;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -19,6 +20,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.Mass;
+import edu.wpi.first.units.measure.Time;
 
 public final class SlapdownConstants {
         /** The CAN ID of the slapdown motor. */
@@ -33,6 +35,19 @@ public final class SlapdownConstants {
          * position.
          */
         public final static Angle PositionTolerance = Rotations.of(1.0);
+
+        /**
+         * How long a shot has to have been feeding before the arm starts agitating
+         * the balls toward the kicker.
+         */
+        public final static Time AgitationDelay = Seconds.of(3);
+
+        /**
+         * The time between each reversal of the arm while agitating. The arm is not
+         * waited on, so if this is shorter than its travel time it simply turns
+         * around partway.
+         */
+        public final static Time AgitationGap = Seconds.of(0.5);
 
         /**
          * The arm's elevation above horizontal when the motor is at

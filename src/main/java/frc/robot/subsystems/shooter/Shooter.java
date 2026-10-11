@@ -1,6 +1,7 @@
 package frc.robot.subsystems.shooter;
 
 import frc.robot.subsystems.kicker.Kicker;
+import frc.robot.subsystems.slapdown.Slapdown;
 import frc.robot.commands.ShootCommand;
 
 import static edu.wpi.first.units.Units.Meters;
@@ -169,9 +170,10 @@ public class Shooter extends SubsystemBase {
      */
     public Command manuallyShoot(
             Supplier<AngularVelocity> rpsSupplier,
-            Kicker kicker) {
+            Kicker kicker,
+            Slapdown slapdown) {
         return new ShootCommand(
-                this, kicker,
+                this, kicker, slapdown,
                 rpsSupplier,
                 ShooterState.PRIMING,
                 ShooterState.MANUAL);
@@ -183,12 +185,14 @@ public class Shooter extends SubsystemBase {
      */
     private Command shootAtTarget(
             Supplier<Pose2d> currentPoseSupplier,
-            Translation3d target,
+            Supplier<Translation3d> targetSupplier,
             Kicker kicker,
+            Slapdown slapdown,
             ShooterState primingState,
             ShooterState shootingState) {
         Supplier<AngularVelocity> rpsSupplier = () -> {
             Pose2d currentPose = currentPoseSupplier.get();
+            Translation3d target = targetSupplier.get();
             Translation2d xyProjection = new Translation2d(
                     target.getMeasureX(), target.getMeasureY());
 
@@ -199,7 +203,7 @@ public class Shooter extends SubsystemBase {
         };
 
         return new ShootCommand(
-                this, kicker,
+                this, kicker, slapdown,
                 rpsSupplier,
                 primingState, shootingState);
     }
@@ -210,17 +214,23 @@ public class Shooter extends SubsystemBase {
      */
     public Command autoAimShoot(
             Supplier<Pose2d> currentPoseSupplier,
-            Kicker kicker) {
-        Translation2d hubXY = GameConstants.getHubLocation();
-        Translation3d hub = new Translation3d(
-                hubXY.getMeasureX(),
-                hubXY.getMeasureY(),
-                GameConstants.HubTargetHeight);
+            Kicker kicker,
+            Slapdown slapdown) {
+        /* Looked up while shooting: the alliance isn't known yet when this is built. */
+        Supplier<Translation3d> hub = () -> {
+            Translation2d hubXY = GameConstants.getHubLocation();
+
+            return new Translation3d(
+                    hubXY.getMeasureX(),
+                    hubXY.getMeasureY(),
+                    GameConstants.HubTargetHeight);
+        };
 
         return shootAtTarget(
                 currentPoseSupplier,
                 hub,
                 kicker,
+                slapdown,
                 ShooterState.AUTOHUB_PRIMING, ShooterState.AUTOHUB);
     }
 
@@ -230,11 +240,13 @@ public class Shooter extends SubsystemBase {
      */
     public Command passShoot(
             Supplier<Pose2d> currentPoseSupplier,
-            Kicker kicker) {
+            Kicker kicker,
+            Slapdown slapdown) {
         return shootAtTarget(
                 currentPoseSupplier,
-                new Translation3d(GameConstants.getPassLocation(currentPoseSupplier.get())),
+                () -> new Translation3d(GameConstants.getPassLocation(currentPoseSupplier.get())),
                 kicker,
+                slapdown,
                 ShooterState.AUTOPASS_PRIMING, ShooterState.AUTOPASS);
     }
 
